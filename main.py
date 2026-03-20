@@ -9,7 +9,7 @@ pygame.display.set_caption("Backgammon")
 
 # The size of a chip, everything else is scaled from it
 # The board is 13.5*15.5 with borders and 11.5*13.5 without it
-chip_size = 80
+chip_size = 50
 
 Height = 14.5*chip_size
 Width = 14.5*chip_size
@@ -18,8 +18,10 @@ Screen = pygame.display.set_mode((Width, Height))
 # Frames per second
 fps = 60
 
+
 def clear():
     Screen.fill((0, 0, 0))
+
 
 def draw_board():
     y_offset = chip_size * 2.5
@@ -47,11 +49,12 @@ def draw_board():
             pygame.draw.polygon(Screen, color, [(x + x_offset, chip_size * 14), (x + chip_size/2 + x_offset, chip_size*7.5+y_offset), (x + chip_size + x_offset, chip_size * 14) ])
         x_offset = chip_size * 7.5
 
-
+    # Holders
     pygame.draw.rect(Screen, (0, 0, 0), [chip_size//2, y_offset, chip_size * 13.5, chip_size * 11.5+1], 4)
     pygame.draw.rect(Screen, (0, 0, 0), [chip_size*6.5, y_offset, chip_size * 1.5, chip_size * 11.5], 2)
     pygame.draw.rect(Screen, (0, 0, 0), [chip_size * 6.75, y_offset + chip_size*.25, chip_size * 1, chip_size * 4], 2)
     pygame.draw.rect(Screen, (0, 0, 0), [chip_size * 6.75, y_offset + chip_size*7.25, chip_size * 1, chip_size * 4], 2)
+
 
 def main():
     while True:
