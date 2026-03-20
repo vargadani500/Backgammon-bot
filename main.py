@@ -46,7 +46,7 @@ def draw_board():
                 color = (135, 0, 0)
             else:
                 color = (255, 255, 255)
-            pygame.draw.polygon(Screen, color, [(x + x_offset, chip_size * 14), (x + chip_size/2 + x_offset, chip_size*7.5+y_offset), (x + chip_size + x_offset, chip_size * 14) ])
+            pygame.draw.polygon(Screen, color, [(x + x_offset, chip_size * 14), (x + chip_size/2 + x_offset, chip_size*6.5+y_offset), (x + chip_size + x_offset, chip_size * 14) ])
         x_offset = chip_size * 7.5
 
     # Holders
