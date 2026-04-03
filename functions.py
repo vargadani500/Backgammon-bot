@@ -79,6 +79,7 @@ class Board:
                             break
         if len(valid_moves) == 0:
             dice.turn *= -1
+            dice.remaining = []
         return valid_moves
 
     def make_move(self, dice, move):
