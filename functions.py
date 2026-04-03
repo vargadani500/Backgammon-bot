@@ -8,6 +8,7 @@ chip_size = settings.chip_size
 pygame.font.init()
 comic_sans = pygame.font.SysFont('Comic Sans MS', chip_size//2)
 
+
 class Board:
     def __init__(self, surface):
         self.state = np.zeros(24, int)
@@ -23,93 +24,6 @@ class Board:
 
     def click(self):
         self.set()
-    
-    def draw(self):
-        surface = self.surface
-        y_offset = chip_size * 2.5
-        pygame.draw.rect(surface, (245, 208, 135), [0, chip_size * 2, chip_size * 14.5, chip_size * 12.5])
-
-        # First row
-        x_offset = 0
-        for j in range(2):
-            for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
-                if i % 2 == 0:
-                    color = (255, 255, 255)
-                else:
-                    color = (135, 0, 0)
-                cords = [(x + x_offset, y_offset), (x + chip_size / 2 + x_offset, chip_size * 5 + y_offset),
-                         (x + chip_size + x_offset, y_offset)]
-                pygame.draw.polygon(surface, color, cords)
-            x_offset = chip_size * 7.5
-
-        # Second row
-        x_offset = 0
-        for j in range(2):
-            for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
-                if i % 2 == 0:
-                    color = (135, 0, 0)
-                else:
-                    color = (255, 255, 255)
-                cords = [(x + x_offset, chip_size * 14), (x + chip_size / 2 + x_offset, chip_size * 6.5 + y_offset),
-                         (x + chip_size + x_offset, chip_size * 14)]
-                pygame.draw.polygon(surface, color, cords)
-            x_offset = chip_size * 7.5
-
-        # Holders
-        pygame.draw.rect(surface, (0, 0, 0), [chip_size // 2, y_offset, chip_size * 13.5, chip_size * 11.5 + 1], 4)
-        pygame.draw.rect(surface, (0, 0, 0), [chip_size * 6.5, y_offset, chip_size * 1.5, chip_size * 11.5], 2)
-        pygame.draw.rect(surface, (0, 0, 0),[chip_size * 6.75, y_offset + chip_size * .25, chip_size * 1, chip_size * 4], 2)
-        pygame.draw.rect(surface, (0, 0, 0),[chip_size * 6.75, y_offset + chip_size * 7.25, chip_size * 1, chip_size * 4], 2)
-    
-    def draw_pieces(self):
-        state = self.state.reshape((2, 12))
-        surface = self.surface
-        # First row
-        x_offset = 0
-        for j in range(2):
-            for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
-                chip_count = abs(state[(0, i + j * 6)])
-                if state[(0, i + j * 6)] > 0:
-                    for k in range(chip_count):
-                        center = (x + x_offset + chip_size / 2, chip_size * 3 + chip_size * k)
-                        if k < 5:
-                            pygame.draw.circle(surface, (255, 255, 255), center, chip_size / 2)
-                            pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
-                elif state[(0, i + j * 6)] < 0:
-                    for k in range(chip_count):
-                        center = (x + x_offset + chip_size / 2, chip_size * 3 + chip_size * k)
-                        if k < 5:
-                            pygame.draw.circle(surface, (135, 0, 0), center, chip_size / 2)
-                            pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
-                if chip_count > 5:
-                    text_surface = comic_sans.render(f"+{chip_count - 5}", False, (0, 0, 0))
-                    surface.blit(text_surface, (x + x_offset + chip_size / 10, chip_size * 2.6))
-            x_offset = chip_size * 7.5
-
-        # Second row
-        x_offset = 0
-        for j in range(2):
-            for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
-                chip_count = abs(state[(1, i + j * 6)])
-                if state[(1, i + j * 6)] > 0:
-                    for k in range(chip_count):
-                        center = (x + x_offset + chip_size / 2, chip_size * 13.5 - chip_size * k)
-                        if k < 5:
-                            pygame.draw.circle(surface, (255, 255, 255), center, chip_size / 2)
-                            pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
-                elif state[(1, i + j * 6)] < 0:
-                    for k in range(chip_count):
-                        center = (x + x_offset + chip_size / 2, chip_size * 13.5 - chip_size * k)
-                        if k < 5:
-                            pygame.draw.circle(surface, (135, 0, 0), center, chip_size / 2)
-                            pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
-                if chip_count > 5:
-                    text_surface = comic_sans.render(f"+{chip_count - 5}", False, (0, 0, 0))
-                    surface.blit(text_surface, (x + x_offset + chip_size / 10, chip_size * 13.1))
-            x_offset = chip_size * 7.5
-
-    def clear(self):
-        self.surface.fill((50, 50, 50))
 
 
 class Dice:
@@ -183,3 +97,89 @@ class Button:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
                 dice_object.click()
+
+
+def draw_board(surface):
+    y_offset = chip_size * 2.5
+    pygame.draw.rect(surface, (245, 208, 135), [0, chip_size * 2, chip_size * 14.5, chip_size * 12.5])
+
+    # First row
+    x_offset = 0
+    for j in range(2):
+        for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
+            if i % 2 == 0:
+                color = (255, 255, 255)
+            else:
+                color = (135, 0, 0)
+            cords = [(x + x_offset, y_offset), (x + chip_size / 2 + x_offset, chip_size * 5 + y_offset),
+                     (x + chip_size + x_offset, y_offset)]
+            pygame.draw.polygon(surface, color, cords)
+        x_offset = chip_size * 7.5
+
+    # Second row
+    x_offset = 0
+    for j in range(2):
+        for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
+            if i % 2 == 0:
+                color = (135, 0, 0)
+            else:
+                color = (255, 255, 255)
+            cords = [(x + x_offset, chip_size * 14), (x + chip_size / 2 + x_offset, chip_size * 6.5 + y_offset),
+                     (x + chip_size + x_offset, chip_size * 14)]
+            pygame.draw.polygon(surface, color, cords)
+        x_offset = chip_size * 7.5
+
+    # Holders
+    pygame.draw.rect(surface, (0, 0, 0), [chip_size // 2, y_offset, chip_size * 13.5, chip_size * 11.5 + 1], 4)
+    pygame.draw.rect(surface, (0, 0, 0), [chip_size * 6.5, y_offset, chip_size * 1.5, chip_size * 11.5], 2)
+    pygame.draw.rect(surface, (0, 0, 0),[chip_size * 6.75, y_offset + chip_size * .25, chip_size * 1, chip_size * 4], 2)
+    pygame.draw.rect(surface, (0, 0, 0),[chip_size * 6.75, y_offset + chip_size * 7.25, chip_size * 1, chip_size * 4], 2)
+    
+def draw_pieces(surface, state):
+    state = state.reshape((2, 12))
+    # First row
+    x_offset = 0
+    for j in range(2):
+        for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
+            chip_count = abs(state[(0, i + j * 6)])
+            if state[(0, i + j * 6)] > 0:
+                for k in range(chip_count):
+                    center = (x + x_offset + chip_size / 2, chip_size * 3 + chip_size * k)
+                    if k < 5:
+                        pygame.draw.circle(surface, (255, 255, 255), center, chip_size / 2)
+                        pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
+            elif state[(0, i + j * 6)] < 0:
+                for k in range(chip_count):
+                    center = (x + x_offset + chip_size / 2, chip_size * 3 + chip_size * k)
+                    if k < 5:
+                        pygame.draw.circle(surface, (135, 0, 0), center, chip_size / 2)
+                        pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
+            if chip_count > 5:
+                text_surface = comic_sans.render(f"+{chip_count - 5}", False, (0, 0, 0))
+                surface.blit(text_surface, (x + x_offset + chip_size / 10, chip_size * 2.6))
+        x_offset = chip_size * 7.5
+
+    # Second row
+    x_offset = 0
+    for j in range(2):
+        for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
+            chip_count = abs(state[(1, i + j * 6)])
+            if state[(1, i + j * 6)] > 0:
+                for k in range(chip_count):
+                    center = (x + x_offset + chip_size / 2, chip_size * 13.5 - chip_size * k)
+                    if k < 5:
+                        pygame.draw.circle(surface, (255, 255, 255), center, chip_size / 2)
+                        pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
+            elif state[(1, i + j * 6)] < 0:
+                for k in range(chip_count):
+                    center = (x + x_offset + chip_size / 2, chip_size * 13.5 - chip_size * k)
+                    if k < 5:
+                        pygame.draw.circle(surface, (135, 0, 0), center, chip_size / 2)
+                        pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
+            if chip_count > 5:
+                text_surface = comic_sans.render(f"+{chip_count - 5}", False, (0, 0, 0))
+                surface.blit(text_surface, (x + x_offset + chip_size / 10, chip_size * 13.1))
+        x_offset = chip_size * 7.5
+
+def clear(surface):
+    surface.fill((50, 50, 50))

@@ -12,7 +12,6 @@ pygame.display.set_caption("Backgammon")
 fps = 60
 
 
-
 def main():
     board = Board(Screen)
     board.set()
@@ -28,14 +27,14 @@ def main():
                 sys.exit()
 
 
-        board.clear()
+        clear(Screen)
         # Menu
         dice.draw(Screen)
         restart_button.draw(Screen)
         roll_button.draw(Screen)
         # Board
-        board.draw()
-        board.draw_pieces()
+        draw_board(Screen)
+        draw_pieces(Screen, board.state)
         pygame.time.Clock().tick(fps)
         pygame.display.update()
 
