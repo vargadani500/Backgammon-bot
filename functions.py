@@ -42,29 +42,41 @@ class Board:
                 if dice.turn == 1: # White
                     for i in range(24-d):
                         if state[i] > 0 and state[i+d] >= -1:
-                            valid_moves.append((i, i+d))
+                            valid_moves.append((i, i+d, d))
                 else: # Black
                     for i in range(d, 24):
                         if state[i] > 0 and state[i-d] >= -1:
-                            valid_moves.append((i, i-d))
+                            valid_moves.append((i, i-d, d))
         # if we have a piece removed
         else:
             for d in set(dice.remaining):
                 if dice.turn == 1:
                     if state[24] > 0 and state[d-1] >= -1:
-                        valid_moves.append((24, d-1))
+                        valid_moves.append((24, d-1, d))
                 else:
                     if state[25] > 0 and state[24-d] >= -1:
-                        valid_moves.append((25, 24-d))
+                        valid_moves.append((25, 24-d, d))
         # if all pieces are in the house, then bear off
         if dice.turn == 1 and (state[:18]<1).all():
             for d in set(dice.remaining):
                 if state[24-d] > 0:
-                    valid_moves.append((24-d, 26))
+                    valid_moves.append((24-d, 26, d))
+                # Overshoot for white
+                elif (state[18:24 - d] < 1).all():
+                    for p in range(24 - d + 1, 24):
+                        if state[p] > 0:
+                            valid_moves.append((p, 26, d))
+                            break
         elif dice.turn == -1 and (state[6:24]<1).all():
             for d in set(dice.remaining):
                 if state[d-1] > 0:
-                    valid_moves.append((d-1, 27))
+                    valid_moves.append((d-1, 27, d))
+                # Overshoot for black
+                elif (state[d:6] < 1).all():
+                    for p in range(d - 2, -1, -1):
+                        if state[p] > 0:
+                            valid_moves.append((p, 27, d))
+                            break
         if len(valid_moves) == 0:
             dice.turn *= -1
         return valid_moves
@@ -83,16 +95,7 @@ class Board:
         self.state[move[1]] += dice.turn
 
         # Removing the used dice
-        if move[0] == 24: # Removed whites
-            dice.remaining.remove(move[1]+1)
-        elif move[0] == 25: # Removed blacks
-            dice.remaining.remove(24-move[1])
-        elif move[1] == 26: # White bear off
-            dice.remaining.remove(24-move[0])
-        elif move[1] == 27: # Black bear off
-            dice.remaining.remove(move[0]+1)
-        else:
-            dice.remaining.remove(abs(move[0] - move[1]))
+        dice.remaining.remove(move[2])
 
         # Ending turn when out of dice
         if len(dice.remaining) == 0:
