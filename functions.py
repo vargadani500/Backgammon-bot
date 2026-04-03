@@ -1,5 +1,4 @@
 import pygame, random, numpy as np, settings
-from poetry.console.commands import self
 
 # Importing from settings, the main file uses this
 chip_size = settings.chip_size
@@ -11,33 +10,117 @@ comic_sans = pygame.font.SysFont('Comic Sans MS', chip_size//2)
 
 class Board:
     def __init__(self, surface):
-        self.state = np.zeros(24, int)
+        # State #
+        # 0-23 is the board from white house to black house
+        # 24 is removed whites
+        # 25 is removed blacks
+        # 26 is white bear off
+        # 27 is black bear off
+        self.state = np.zeros(28, int)
         self.surface = surface
 
     def set(self):
-        self.state = np.zeros(24, int)
-        self.state[0] = 5
-        self.state[4] = -3
-        self.state[6] = -5
-        self.state[11] = 2
-        self.state[12:] = -self.state[:12]
+        self.state = np.zeros(28, int)
+        self.state[0] = 2
+        self.state[5] = -5
+        self.state[7] = -3
+        self.state[11] = 5
+        self.state[12] = -5
+        self.state[16] = 3
+        self.state[18] = 5
+        self.state[23] = -2
 
     def click(self):
         self.set()
 
+    def get_valid_moves(self, dice):
+        state = self.state*dice.turn # Same color will be pos
+        valid_moves = []
+        # General case
+        if (state[24:26] < 1).all():
+            for d in set(dice.remaining):
+                if dice.turn == 1: # White
+                    for i in range(24-d):
+                        if state[i] > 0 and state[i+d] >= -1:
+                            valid_moves.append((i, i+d))
+                else: # Black
+                    for i in range(d, 24):
+                        if state[i] > 0 and state[i-d] >= -1:
+                            valid_moves.append((i, i-d))
+        # if we have a piece removed
+        else:
+            for d in set(dice.remaining):
+                if dice.turn == 1:
+                    if state[24] > 0 and state[d-1] >= -1:
+                        valid_moves.append((24, d-1))
+                else:
+                    if state[25] > 0 and state[24-d] >= -1:
+                        valid_moves.append((25, 24-d))
+        # if all pieces are in the house, then bear off
+        if dice.turn == 1 and (state[:18]<1).all():
+            for d in set(dice.remaining):
+                if state[24-d] > 0:
+                    valid_moves.append((24-d, 26))
+        elif dice.turn == -1 and (state[6:24]<1).all():
+            for d in set(dice.remaining):
+                if state[d-1] > 0:
+                    valid_moves.append((d-1, 27))
+        if len(valid_moves) == 0:
+            dice.turn *= -1
+        return valid_moves
+
+    def make_move(self, dice, move):
+        # Checking for hits
+        if self.state[move[0]] * self.state[move[1]] < 0:
+            self.state[move[1]] += dice.turn
+            if dice.turn == 1:
+                self.state[25] -= dice.turn
+            else:
+                self.state[24] -= dice.turn
+
+        # Moving the piece
+        self.state[move[0]] -= dice.turn
+        self.state[move[1]] += dice.turn
+
+        # Removing the used dice
+        if move[0] == 24: # Removed whites
+            dice.remaining.remove(move[1]+1)
+        elif move[0] == 25: # Removed blacks
+            dice.remaining.remove(24-move[1])
+        elif move[1] == 26: # White bear off
+            dice.remaining.remove(24-move[0])
+        elif move[1] == 27: # Black bear off
+            dice.remaining.remove(move[0]+1)
+        else:
+            dice.remaining.remove(abs(move[0] - move[1]))
+
+        # Ending turn when out of dice
+        if len(dice.remaining) == 0:
+            dice.turn *= -1 # This changes color
+
 
 class Dice:
     def __init__(self, x=0, y=0, size=50):
+        # The turn color is 1 for white, -1 for black
+        self.turn = -1
         self.x = x
         self.y = y
+        self.remaining = []
         self.state = (6, 6)
         self.size = size
         self.font = pygame.font.SysFont(None, int(self.size * 0.8))
 
-    def click(self):
-        # Roll on click
+    def roll(self):
         self.state = (random.randint(1, 6), random.randint(1, 6))
-        return self.state
+        if self.state[0] == self.state[1]:
+            [self.remaining.append(self.state[0]) for _ in range(4)]
+        else:
+            [self.remaining.append(i) for i in self.state]
+
+
+    def click(self):
+        self.roll() # Roll on click
+
 
     def __str__(self):
         # This is for printing
@@ -46,7 +129,10 @@ class Dice:
     def draw(self, surface):
 
         # Color
-        dice_color = (255, 255, 255)
+        if self.turn == 1:
+            dice_color = (255, 255, 255)
+        else:
+            dice_color = (135, 0, 0)
         border_color = (0, 0, 0)
         text_color = (0, 0, 0)
 
@@ -134,13 +220,14 @@ def draw_board(surface):
     pygame.draw.rect(surface, (0, 0, 0), [chip_size * 6.5, y_offset, chip_size * 1.5, chip_size * 11.5], 2)
     pygame.draw.rect(surface, (0, 0, 0),[chip_size * 6.75, y_offset + chip_size * .25, chip_size * 1, chip_size * 4], 2)
     pygame.draw.rect(surface, (0, 0, 0),[chip_size * 6.75, y_offset + chip_size * 7.25, chip_size * 1, chip_size * 4], 2)
-    
+
+
 def draw_pieces(surface, state):
-    state = state.reshape((2, 12))
+    state, removed_whites, removed_blacks, white_bear_off, black_bear_off = state[:24].reshape((2, 12)), state[24], state[25], state[26], state[27]
     # First row
-    x_offset = 0
+    x_offset = chip_size * 7
     for j in range(2):
-        for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
+        for i, x in enumerate(range(6 * chip_size, 0, -chip_size)):
             chip_count = abs(state[(0, i + j * 6)])
             if state[(0, i + j * 6)] > 0:
                 for k in range(chip_count):
@@ -157,7 +244,7 @@ def draw_pieces(surface, state):
             if chip_count > 5:
                 text_surface = comic_sans.render(f"+{chip_count - 5}", False, (0, 0, 0))
                 surface.blit(text_surface, (x + x_offset + chip_size / 10, chip_size * 2.6))
-        x_offset = chip_size * 7.5
+        x_offset = chip_size/-2
 
     # Second row
     x_offset = 0
@@ -180,6 +267,33 @@ def draw_pieces(surface, state):
                 text_surface = comic_sans.render(f"+{chip_count - 5}", False, (0, 0, 0))
                 surface.blit(text_surface, (x + x_offset + chip_size / 10, chip_size * 13.1))
         x_offset = chip_size * 7.5
+
+    # Removed pieces
+    if removed_whites > 0:
+        center = (settings.Width/2, chip_size * 7.5)
+        pygame.draw.circle(surface, (255, 255, 255), center, chip_size / 2)
+        pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
+        if removed_whites > 1:
+            text_surface = comic_sans.render(f"+{removed_whites - 1}", False, (0, 0, 0))
+            surface.blit(text_surface, text_surface.get_rect(center=center))
+    if removed_blacks < 0:
+        center = (settings.Width/2, chip_size * 9)
+        pygame.draw.circle(surface, (135, 0, 0), center, chip_size / 2)
+        pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
+        if removed_blacks < -1:
+            text_surface = comic_sans.render(f"+{-removed_blacks - 1}", False, (0, 0, 0))
+            surface.blit(text_surface, text_surface.get_rect(center=center))
+
+    # Bear off
+    for i in range(white_bear_off):
+        rect = (chip_size*6.75, chip_size*9.75+i*chip_size*4/15, chip_size, chip_size*4/15)
+        pygame.draw.rect(surface, (255, 255, 255), rect)
+        pygame.draw.rect(surface, (0, 0, 0), rect, 2)
+    for i in range(-black_bear_off):
+        rect = (chip_size*6.75, chip_size*2.75+i*chip_size*4/15, chip_size, chip_size*4/15)
+        pygame.draw.rect(surface, (135, 0, 0), rect)
+        pygame.draw.rect(surface, (0, 0, 0), rect, 2)
+
 
 def clear(surface):
     surface.fill((50, 50, 50))
