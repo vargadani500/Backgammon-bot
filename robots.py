@@ -11,7 +11,7 @@ from functions import *
 
 
 def scorer(state):
-    score = 0 # Positive favors white
+    score = 0.0 # Positive favors white
 
     # Pieces removed
     score -= state[24]*15 # White
@@ -39,10 +39,12 @@ def scorer(state):
         if cell < -1 and i+1<24 and state[i+1] < -1:
             score -= 3
         # Pip count
+        pips = 0 # for easier printing
         if cell > 0:
-            score -= cell*(24-i)/2
+            pips -= cell*(24-i)
         if cell < 0:
-            score -= (cell+1)*i/2
+            pips -= (cell+1)*i
+        score += pips/2
     return score
 
 
@@ -56,7 +58,9 @@ def random_bot(board, dice):
 def greedy_bot(board, dice):
     turns = board.get_valid_turns(dice)
     best_move = [[], float("-inf")]
+    # Finding the move with the highest score
     for path, state in zip(*turns):
+        # Positive is our color now
         score = scorer(state)*dice.turn
         if score > best_move[1]:
             best_move = [path, score]

@@ -9,8 +9,8 @@ graphics = False
 fps = 1
 
 # Who plays as White and Black
-W_Player = "random_bot"
-B_Player = "greedy_bot"
+B_Player = "random_bot"
+W_Player = "greedy_bot"
 
 Height = 14.5*chip_size
 Width = 14.5*chip_size

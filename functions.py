@@ -62,7 +62,7 @@ class Board:
                         valid_moves.append((25, 24-d, d))
 
         # Bear off for white
-        if dice.turn == 1 and all(i < 1 for i in state[:18]):
+        if dice.turn == 1 and all(i < 1 for i in state[:18]) and state[24] == 0:
             for d in set(dice.remaining):
                 if state[24-d] > 0:
                     valid_moves.append((24-d, 26, d))
@@ -73,7 +73,7 @@ class Board:
                             valid_moves.append((p, 26, d))
                             break
         # Bear off for black
-        elif dice.turn == -1 and all(i < 1 for i in state[6:24]):
+        elif dice.turn == -1 and all(i < 1 for i in state[6:24]) and state[25] == 0:
             for d in set(dice.remaining):
                 if state[d-1] > 0:
                     valid_moves.append((d-1, 27, d))
@@ -239,6 +239,7 @@ class Board:
             rect = (chip_size * 6.75, chip_size * 9.75 + i * chip_size * 4 / 15, chip_size, chip_size * 4 / 15)
             pygame.draw.rect(surface, (255, 255, 255), rect)
             pygame.draw.rect(surface, (0, 0, 0), rect, 2)
+
         for i in range(-black_bear_off):
             rect = (chip_size * 6.75, chip_size * 2.75 + i * chip_size * 4 / 15, chip_size, chip_size * 4 / 15)
             pygame.draw.rect(surface, (135, 0, 0), rect)
