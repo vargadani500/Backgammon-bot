@@ -235,14 +235,16 @@ class Board:
                 surface.blit(text_surface, text_surface.get_rect(center=center))
 
         # Bear off
-        for i in range(white_bear_off):
-            rect = (chip_size * 6.75, chip_size * 9.75 + i * chip_size * 4 / 15, chip_size, chip_size * 4 / 15)
-            pygame.draw.rect(surface, (255, 255, 255), rect)
-            pygame.draw.rect(surface, (0, 0, 0), rect, 2)
-        for i in range(-black_bear_off):
-            rect = (chip_size * 6.75, chip_size * 2.75 + i * chip_size * 4 / 15, chip_size, chip_size * 4 / 15)
-            pygame.draw.rect(surface, (135, 0, 0), rect)
-            pygame.draw.rect(surface, (0, 0, 0), rect, 2)
+        if removed_whites == 0:
+            for i in range(white_bear_off):
+                rect = (chip_size * 6.75, chip_size * 9.75 + i * chip_size * 4 / 15, chip_size, chip_size * 4 / 15)
+                pygame.draw.rect(surface, (255, 255, 255), rect)
+                pygame.draw.rect(surface, (0, 0, 0), rect, 2)
+        if removed_blacks == 0:
+            for i in range(-black_bear_off):
+                rect = (chip_size * 6.75, chip_size * 2.75 + i * chip_size * 4 / 15, chip_size, chip_size * 4 / 15)
+                pygame.draw.rect(surface, (135, 0, 0), rect)
+                pygame.draw.rect(surface, (0, 0, 0), rect, 2)
 
 
 class Dice:

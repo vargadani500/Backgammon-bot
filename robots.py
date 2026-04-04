@@ -56,8 +56,12 @@ def random_bot(board, dice):
 def greedy_bot(board, dice):
     turns = board.get_valid_turns(dice)
     best_move = [[], float("-inf")]
+
+    # Finding the move with the highest score
     for path, state in zip(*turns):
+        # Positive is our color now
         score = scorer(state)*dice.turn
         if score > best_move[1]:
             best_move = [path, score]
+
     return best_move[0]
