@@ -9,7 +9,7 @@ comic_sans = pygame.font.SysFont('Comic Sans MS', chip_size//2)
 
 
 class Board:
-    def __init__(self, surface):
+    def __init__(self):
         # State #
         # 0-23 is the board from white house to black house
         # 24 is removed whites
@@ -17,7 +17,7 @@ class Board:
         # 26 is white bear off
         # 27 is black bear off
         self.state = np.zeros(28, int)
-        self.surface = surface
+        self.winner = 0
 
     def set(self):
         self.state = np.zeros(28, int)
@@ -85,6 +85,7 @@ class Board:
     def make_move(self, dice, move):
         # Checking for hits
         if self.state[move[0]] * self.state[move[1]] < 0:
+            # Moving the removed piece in its new place
             self.state[move[1]] += dice.turn
             if dice.turn == 1:
                 self.state[25] -= dice.turn
@@ -94,6 +95,16 @@ class Board:
         # Moving the piece
         self.state[move[0]] -= dice.turn
         self.state[move[1]] += dice.turn
+
+        # Checking for win
+        if self.state[26] == 15:
+            self.winner = 1
+            #Temp
+            print("White won")
+        elif self.state[27] == 15:
+            self.winner = -1
+            #Temp
+            print("Black won")
 
         # Removing the used dice
         dice.remaining.remove(move[2])
@@ -178,12 +189,12 @@ class Button:
         # Draw background
         pygame.draw.rect(surface, current_color, self.rect)
 
-        # Render and center text (using your existing comic_sans font)
+        # Render and center text
         text_surf = comic_sans.render(self.text, True, (0, 0, 0))
         surface.blit(text_surf, text_surf.get_rect(center=self.rect.center))
 
     def handle_event(self, event, dice_object):
-        # Trigger the roll on the exact frame the mouse is clicked
+        # Trigger the click event of the object
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
                 dice_object.click()

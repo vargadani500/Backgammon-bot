@@ -1,7 +1,4 @@
 import sys
-import time
-from time import sleep
-
 from functions import *
 
 # Initializing pygame
@@ -16,7 +13,7 @@ fps = 60
 
 
 def main():
-    board = Board(Screen)
+    board = Board()
     board.set()
 
     dice = Dice(chip_size*6, chip_size*.5, chip_size)
@@ -37,9 +34,9 @@ def main():
             moves = board.get_valid_moves(dice)
             if len(moves) > 0:
                 board.make_move(dice, random.choice(moves))
-            else:
+            elif board.winner == 0:
                 dice.roll()
-        else:
+        elif board.winner == 0:
             dice.roll()
         # Test
 
@@ -52,7 +49,9 @@ def main():
         # Board
         draw_board(Screen)
         draw_pieces(Screen, board.state)
+        # Clock for fps
         pygame.time.Clock().tick(fps)
+        # This updates the screen
         pygame.display.update()
 
 
