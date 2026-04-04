@@ -1,4 +1,4 @@
-import pygame, random, numpy as np, settings, copy
+import pygame, random, numpy as np, settings
 
 # Importing from settings, the main file uses this
 chip_size = settings.chip_size
@@ -110,10 +110,6 @@ class Board:
 
         # Removing the used dice
         dice.remaining.remove(move[2])
-
-        # Ending turn when out of dice
-        if len(dice.remaining) == 0:
-            dice.turn *= -1 # This changes color
 
         # Returning board state
         return self.state

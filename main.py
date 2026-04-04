@@ -34,6 +34,9 @@ def main():
         if len(turns) > 0:
             for move in random.choice(turns):
                 board.make_move(dice, move)
+        elif board.winner == 0:
+            dice.turn *= -1
+            dice.roll()
         # Test
 
 
