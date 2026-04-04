@@ -1,4 +1,4 @@
-import pygame, random, numpy as np, settings
+import pygame, numpy as np, settings, random
 
 # Importing from settings, the main file uses this
 chip_size = settings.chip_size
@@ -234,6 +234,8 @@ class Board:
             rect = (chip_size * 6.75, chip_size * 2.75 + i * chip_size * 4 / 15, chip_size, chip_size * 4 / 15)
             pygame.draw.rect(surface, (135, 0, 0), rect)
             pygame.draw.rect(surface, (0, 0, 0), rect, 2)
+
+
 class Dice:
     def __init__(self, x=0, y=0):
         # The turn color is 1 for white, -1 for black

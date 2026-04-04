@@ -1,5 +1,5 @@
 import sys
-from functions import *
+from robots import *
 
 # Initializing pygame
 pygame.init()
@@ -29,15 +29,18 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        # Test
-        turns = board.get_valid_turns(dice)[0]
-        if len(turns) > 0:
-            for move in random.choice(turns):
-                board.make_move(dice, move)
-        elif board.winner == 0:
+        # Making moves
+        if board.winner == 0:
             dice.turn *= -1
             dice.roll()
-        # Test
+            if dice.turn == 1:
+                # Get the bots decision
+                turn = eval(settings.W_Player+"(board, dice)")
+            else:
+                turn = eval(settings.W_Player+"(board, dice)")
+            print(turn)
+            for move in turn:
+                board.make_move(dice, move)
 
 
         clear(Screen)
