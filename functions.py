@@ -1,4 +1,4 @@
-import pygame, random, numpy as np, settings
+import pygame, random, numpy as np, settings, copy
 
 # Importing from settings, the main file uses this
 chip_size = settings.chip_size
@@ -6,6 +6,7 @@ chip_size = settings.chip_size
 # Initializing fonts
 pygame.font.init()
 comic_sans = pygame.font.SysFont('Comic Sans MS', chip_size//2)
+sys_font = pygame.font.SysFont(None, int(chip_size * 0.8))
 
 
 class Board:
@@ -35,6 +36,8 @@ class Board:
         self.set()
 
     def get_valid_moves(self, dice):
+        if self.winner != 0:
+            return []
         state = self.state*dice.turn # Same color will be pos
         valid_moves = []
 
@@ -86,8 +89,6 @@ class Board:
 
 
     def make_move(self, dice, move):
-        if move is None:
-            return self.state
         # Checking for hits
         if self.state[move[0]] * self.state[move[1]] < 0:
             # Moving the removed piece in its new place
@@ -104,12 +105,8 @@ class Board:
         # Checking for win
         if self.state[26] == 15:
             self.winner = 1
-            #Temp
-            print("White won")
         elif self.state[27] == -15:
             self.winner = -1
-            #Temp
-            print("Black won")
 
         # Removing the used dice
         dice.remaining.remove(move[2])
@@ -121,43 +118,66 @@ class Board:
         # Returning board state
         return self.state
 
-    def get_valid_pairs(self, dice):
-        if self.winner != 0:
-            return []
-        # Get valid fist moves
-        first_moves = self.get_valid_moves(dice)
-        valid_pairs = []
-        # Go through all possible first moves
-        for move in first_moves:
-            # Making a copy of the board and dice (avoiding pointers)
-            ghost = Board()
-            g_dice = Dice()
-            g_dice.turn = dice.turn
-            g_dice.remaining = dice.state
-            g_dice.remaining = list(dice.remaining)
-            ghost.state = self.state.copy()
-            # Get valid second moves for this first move
-            ghost.make_move(g_dice, move)
-            valid_pairs += [(move, i) for i in ghost.get_valid_moves(g_dice)]
+    def get_valid_turns(self, dice):
+        # Returning nothing if the game is over
 
-        # Returning pairs with only one move, if no actual pairs exist
-        if len(valid_pairs) == 0:
-            return [(move, None) for move in first_moves]
-        else:
-            return valid_pairs
+        all_paths_found = []
+        # First we find all possible paths
+        def search_paths(c_board, c_dice, c_path):
+            # Closing down paths
+            moves = c_board.get_valid_moves(c_dice)
+            if not moves:
+                current = tuple(c_board.state)
+                all_paths_found.append((c_path, current))
+                return
+
+            # Discovering new paths
+            for move in moves:
+                # Copying the board
+                g_board = Board()
+                g_board.state = c_board.state.copy()
+
+                # Copying the dice
+                g_dice = Dice()
+                g_dice.turn = c_dice.turn
+                g_dice.remaining = list(c_dice.remaining)
+
+                # Making the move on the board
+                g_board.make_move(g_dice, move)
+
+                # Recursive call
+                search_paths(g_board, g_dice, c_path + [move])
+
+        # Doing the search
+        search_paths(self, dice, [])
+
+        # Determining the longest move, cause we have to make a move just as long according to the rules
+        max_path_length = max([len(path) for path, state in all_paths_found])
+        unique_paths = []
+        unique_states = set()
+
+        # Returning nothing, if there are no legal moves
+        if max_path_length == 0:
+            return unique_paths, unique_states
+        # Removing duplicates
+        for path, state in all_paths_found:
+            if len(path) == max_path_length and state not in unique_states:
+                unique_states.add(state)
+                unique_paths.append(path)
+        return unique_paths, unique_states
 
 class Dice:
-    def __init__(self, x=0, y=0, size=50):
+    def __init__(self, x=0, y=0):
         # The turn color is 1 for white, -1 for black
         self.turn = -1
         self.x = x
         self.y = y
         self.remaining = []
         self.state = (6, 6)
-        self.size = size
-        self.font = pygame.font.SysFont(None, int(self.size * 0.8))
+        self.size = chip_size
 
     def roll(self):
+        self.remaining = []
         self.state = (random.randint(1, 6), random.randint(1, 6))
         if self.state[0] == self.state[1]:
             [self.remaining.append(self.state[0]) for _ in range(4)]
@@ -197,11 +217,11 @@ class Dice:
         pygame.draw.rect(surface, border_color, rect2, 2)
 
         # Text on dices
-        text1_surface = self.font.render(str(self.state[0]), True, text_color)
+        text1_surface = sys_font.render(str(self.state[0]), True, text_color)
         text1_rect = text1_surface.get_rect(center=rect1.center)
         surface.blit(text1_surface, text1_rect)
 
-        text2_surface = self.font.render(str(self.state[1]), True, text_color)
+        text2_surface = sys_font.render(str(self.state[1]), True, text_color)
         text2_rect = text2_surface.get_rect(center=rect2.center)
         surface.blit(text2_surface, text2_rect)
 

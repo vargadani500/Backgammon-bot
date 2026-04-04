@@ -16,7 +16,7 @@ def main():
     board = Board()
     board.set()
 
-    dice = Dice(chip_size*6, chip_size*.5, chip_size)
+    dice = Dice(chip_size*6, chip_size*.5)
     dice.click() # First dice roll
 
     roll_button = Button(pygame.Rect(chip_size*3.5, chip_size*.5, chip_size * 2, chip_size), "Roll")
@@ -30,9 +30,9 @@ def main():
                 sys.exit()
 
         # Test
-        pairs = board.get_valid_pairs(dice)
-        if len(pairs) > 0:
-            for move in random.choice(pairs):
+        turns = board.get_valid_turns(dice)[0]
+        if len(turns) > 0:
+            for move in random.choice(turns):
                 board.make_move(dice, move)
         # Test
 
