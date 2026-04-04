@@ -30,14 +30,10 @@ def main():
                 sys.exit()
 
         # Test
-        if len(dice.remaining) > 0:
-            moves = board.get_valid_moves(dice)
-            if len(moves) > 0:
-                board.make_move(dice, random.choice(moves))
-            elif board.winner == 0:
-                dice.roll()
-        elif board.winner == 0:
-            dice.roll()
+        pairs = board.get_valid_pairs(dice)
+        if len(pairs) > 0:
+            for move in random.choice(pairs):
+                board.make_move(dice, move)
         # Test
 
 
