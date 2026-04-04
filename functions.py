@@ -47,7 +47,7 @@ class Board:
                         if state[i] > 0 and state[i+d] >= -1:
                             valid_moves.append((i, i+d, d))
                 else: # Black
-                    for i in range(d, 24):
+                    for i in range(23, d-1, -1):
                         if state[i] > 0 and state[i-d] >= -1:
                             valid_moves.append((i, i-d, d))
 

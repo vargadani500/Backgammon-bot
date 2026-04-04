@@ -26,13 +26,19 @@ def scorer(state):
         # Anchors
         if cell > 1 and i<6:
             score += 10
-        if cell < -1 and i>18:
+        if cell < -1 and i>17:
             score -= 10
         # Pieces in danger
-        if cell == 1 and any([j < 0 for j in state[i+1:min(24, i+7)]]):
-            score -= 10
-        if cell == -1 and any([j > 0 for j in state[max(0, i-6):i]]):
-            score += 10
+        if cell == 1:
+            if any([j < 0 for j in state[i+1:min(24, i+7)]]):
+                score -= 10
+            elif i >  17 and state[25] != 0:
+                score -= 10
+        if cell == -1:
+            if any([j > 0 for j in state[max(0, i-6):i]]):
+                score += 10
+            elif i < 6 and state[24] != 0:
+                score += 10
         # Blocking
         if cell > 1 and i+1<24 and state[i+1] > 1:
             score += 3
@@ -43,7 +49,7 @@ def scorer(state):
         if cell > 0:
             pips -= cell*(24-i)
         if cell < 0:
-            pips -= (cell+1)*i
+            pips -= cell*(i+1)
         score += pips/2
     return score
 
