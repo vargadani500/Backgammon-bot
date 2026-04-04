@@ -158,7 +158,7 @@ class Board:
         # Determining the longest move, cause we have to make a move just as long according to the rules
         max_path_length = max([len(path) for path, state in all_paths_found])
         unique_paths = []
-        unique_states = set()
+        unique_states = []
 
         # Returning nothing, if there are no legal moves
         if max_path_length == 0:
@@ -166,7 +166,7 @@ class Board:
         # Removing duplicates
         for path, state in all_paths_found:
             if len(path) == max_path_length and state not in unique_states:
-                unique_states.add(state)
+                unique_states.append(state)
                 unique_paths.append(path)
         return unique_paths, unique_states
 
