@@ -9,9 +9,6 @@ if settings.graphics:
     Screen = pygame.display.set_mode((settings.Width, settings.Height))
     pygame.display.set_caption("Backgammon")
 
-    # Frames per second
-    fps = 60
-
 
 def main():
     # Setting the game up
@@ -68,7 +65,7 @@ def main():
             draw_board(Screen)
             board.draw_pieces(Screen)
             # Clock for fps
-            pygame.time.Clock().tick(fps)
+            pygame.time.Clock().tick(settings.fps)
             # This updates the screen
             pygame.display.update()
 

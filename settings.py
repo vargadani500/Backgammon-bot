@@ -3,7 +3,10 @@
 chip_size = 50
 
 # Pygame graphics (Needed for human players)
-graphics = False
+graphics = True
+
+# Frames per second
+fps = 60
 
 # Who plays as White and Black
 W_Player = "random_bot"

@@ -172,19 +172,20 @@ class Board:
 
     def draw_pieces(self, surface):
         state = self.state
-        state, removed_whites, removed_blacks, white_bear_off, black_bear_off = state[:24].reshape((2, 12)), state[24], state[25], state[26], state[27]
+        removed_whites, removed_blacks, white_bear_off, black_bear_off = state[24], state[25], state[26], state[27]
+        state = (state[:12], state[12:24])
         # First row
         x_offset = chip_size * 7
         for j in range(2):
             for i, x in enumerate(range(6 * chip_size, 0, -chip_size)):
-                chip_count = abs(state[(0, i + j * 6)])
-                if state[(0, i + j * 6)] > 0:
+                chip_count = abs(state[0][i + j * 6])
+                if state[0][i + j * 6] > 0:
                     for k in range(chip_count):
                         center = (x + x_offset + chip_size / 2, chip_size * 3 + chip_size * k)
                         if k < 5:
                             pygame.draw.circle(surface, (255, 255, 255), center, chip_size / 2)
                             pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
-                elif state[(0, i + j * 6)] < 0:
+                elif state[0][i + j * 6] < 0:
                     for k in range(chip_count):
                         center = (x + x_offset + chip_size / 2, chip_size * 3 + chip_size * k)
                         if k < 5:
@@ -199,14 +200,14 @@ class Board:
         x_offset = 0
         for j in range(2):
             for i, x in enumerate(range(chip_size // 2, 6 * chip_size, chip_size)):
-                chip_count = abs(state[(1, i + j * 6)])
-                if state[(1, i + j * 6)] > 0:
+                chip_count = abs(state[1][i + j * 6])
+                if state[1][i + j * 6] > 0:
                     for k in range(chip_count):
                         center = (x + x_offset + chip_size / 2, chip_size * 13.5 - chip_size * k)
                         if k < 5:
                             pygame.draw.circle(surface, (255, 255, 255), center, chip_size / 2)
                             pygame.draw.circle(surface, (0, 0, 0), center, chip_size / 2, 2)
-                elif state[(1, i + j * 6)] < 0:
+                elif state[1][i + j * 6] < 0:
                     for k in range(chip_count):
                         center = (x + x_offset + chip_size / 2, chip_size * 13.5 - chip_size * k)
                         if k < 5:
