@@ -3,7 +3,7 @@
 chip_size = 50
 
 # Pygame graphics (Needed for human players)
-graphics = True
+graphics = False
 
 # Frames per second
 fps = 60
