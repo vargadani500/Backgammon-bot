@@ -1,33 +1,35 @@
 import sys
 from robots import *
 
-# Initializing pygame
-pygame.init()
+if settings.graphics:
+    # Initializing pygame
+    pygame.init()
 
-# Creating the window
-Screen = pygame.display.set_mode((settings.Width, settings.Height))
-pygame.display.set_caption("Backgammon")
+    # Creating the window
+    Screen = pygame.display.set_mode((settings.Width, settings.Height))
+    pygame.display.set_caption("Backgammon")
 
-# Frames per second
-fps = 60
+    # Frames per second
+    fps = 60
 
 
 def main():
+    # Setting the game up
     board = Board()
     board.set()
-
     dice = Dice(chip_size*6, chip_size*.5)
-    dice.click() # First dice roll
+
+    sum_of_wins = 0
+    total_games = 0
+
+    # Reading
+    white_bot = globals()[settings.W_Player]
+    black_bot = globals()[settings.B_Player]
 
     roll_button = Button(pygame.Rect(chip_size*3.5, chip_size*.5, chip_size * 2, chip_size), "Roll")
     restart_button = Button(pygame.Rect(chip_size*9, chip_size*.5, chip_size * 2, chip_size), "Restart")
     while True:
-        for event in pygame.event.get():
-            roll_button.handle_event(event, dice)
-            restart_button.handle_event(event, board)
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+
 
         # Making moves
         if board.winner == 0:
@@ -35,26 +37,40 @@ def main():
             dice.roll()
             if dice.turn == 1:
                 # Get the bots decision
-                turn = eval(settings.W_Player+"(board, dice)")
+                turn = white_bot(board, dice)
             else:
-                turn = eval(settings.W_Player+"(board, dice)")
-            print(turn)
+                turn = black_bot(board, dice)
             for move in turn:
                 board.make_move(dice, move)
+        else:
+            sum_of_wins += board.winner
+            board.winner = 0
+            board.set()
+            total_games += 1
+            if total_games % 100 == 0:
+                print(f"Total games: {total_games}\nCurrent standing: {sum_of_wins}")
 
+        # Pygame graphics
+        if settings.graphics:
+            for event in pygame.event.get():
+                roll_button.handle_event(event, dice)
+                restart_button.handle_event(event, board)
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-        clear(Screen)
-        # Menu
-        dice.draw(Screen)
-        restart_button.draw(Screen)
-        roll_button.draw(Screen)
-        # Board
-        draw_board(Screen)
-        board.draw_pieces(Screen)
-        # Clock for fps
-        pygame.time.Clock().tick(fps)
-        # This updates the screen
-        pygame.display.update()
+            clear(Screen)
+            # Menu
+            dice.draw(Screen)
+            restart_button.draw(Screen)
+            roll_button.draw(Screen)
+            # Board
+            draw_board(Screen)
+            board.draw_pieces(Screen)
+            # Clock for fps
+            pygame.time.Clock().tick(fps)
+            # This updates the screen
+            pygame.display.update()
 
 
 if __name__ == '__main__':

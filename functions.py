@@ -1,4 +1,4 @@
-import pygame, numpy as np, settings, random
+import pygame, settings, random
 
 # Importing from settings, the main file uses this
 chip_size = settings.chip_size
@@ -17,12 +17,12 @@ class Board:
         # 25 is removed blacks
         # 26 is white bear off
         # 27 is black bear off
-        self.state = np.zeros(28, int)
+        self.state = [0] * 28
         self.winner = 0
 
     def set(self):
         self.winner = 0
-        self.state = np.zeros(28, int)
+        self.state = [0] * 28
         self.state[0] = 2
         self.state[5] = -5
         self.state[7] = -3
@@ -36,13 +36,11 @@ class Board:
         self.set()
 
     def get_valid_moves(self, dice):
-        if self.winner != 0:
-            return []
-        state = self.state*dice.turn # Same color will be pos
+        state = [i*dice.turn for i in self.state] # Same color will be pos
         valid_moves = []
 
         # General case
-        if (state[24:26] < 1).all():
+        if all(i < 1 for i in state[24:26]):
             for d in set(dice.remaining):
                 if dice.turn == 1: # White
                     for i in range(24-d):
@@ -64,23 +62,23 @@ class Board:
                         valid_moves.append((25, 24-d, d))
 
         # Bear off for white
-        if dice.turn == 1 and (state[:18]<1).all():
+        if dice.turn == 1 and all(i < 1 for i in state[:18]):
             for d in set(dice.remaining):
                 if state[24-d] > 0:
                     valid_moves.append((24-d, 26, d))
                 # Overshoot for white
-                elif (state[18:24 - d] < 1).all():
+                elif all(i < 1 for i in state[18:24 - d]):
                     for p in range(24 - d + 1, 24):
                         if state[p] > 0:
                             valid_moves.append((p, 26, d))
                             break
         # Bear off for black
-        elif dice.turn == -1 and (state[6:24]<1).all():
+        elif dice.turn == -1 and all(i < 1 for i in state[6:24]):
             for d in set(dice.remaining):
                 if state[d-1] > 0:
                     valid_moves.append((d-1, 27, d))
                 # Overshoot for black
-                elif (state[d:6] < 1).all():
+                elif all(i < 1 for i in state[d:6]):
                     for p in range(d - 2, -1, -1):
                         if state[p] > 0:
                             valid_moves.append((p, 27, d))
@@ -114,35 +112,45 @@ class Board:
         # Returning board state
         return self.state
 
+
     def get_valid_turns(self, dice):
         # Returning nothing if the game is over
 
         all_paths_found = []
+        seen_states = set()
         # First we find all possible paths
-        def search_paths(c_board, c_dice, c_path):
+        def search_paths(board, c_dice, path):
+
+            # Making sure we don't calculate the same position twice (Common for doubles)
+            state = (tuple(board.state), tuple(c_dice.remaining))
+            if state in seen_states:
+                return
+
+            # If this is a new state, then adding it to the set
+            seen_states.add(state)
+
             # Closing down paths
-            moves = c_board.get_valid_moves(c_dice)
+            moves = board.get_valid_moves(c_dice)
             if not moves:
-                current = tuple(c_board.state)
-                all_paths_found.append((c_path, current))
+                current = tuple(board.state)
+                all_paths_found.append((path, current))
                 return
 
             # Discovering new paths
             for move in moves:
-                # Copying the board
-                ghost = Board()
-                ghost.state = c_board.state.copy()
-
-                # Copying the dice
-                g_dice = Dice()
-                g_dice.turn = c_dice.turn
-                g_dice.remaining = list(c_dice.remaining)
-
+                # Saving state
+                save_state = board.state[:]
+                remaining_state = c_dice.remaining[:]
+                
                 # Making the move on the board
-                ghost.make_move(g_dice, move)
+                board.make_move(c_dice, move)
 
                 # Recursive call
-                search_paths(ghost, g_dice, c_path + [move])
+                search_paths(board, c_dice, path + [move])
+
+                # Reloading state
+                board.state = save_state
+                c_dice.remaining = remaining_state
 
         # Doing the search
         search_paths(self, dice, [])

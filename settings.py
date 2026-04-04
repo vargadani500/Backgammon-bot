@@ -2,6 +2,9 @@
 # The board is 13.5*15.5 with borders and 11.5*13.5 without it
 chip_size = 50
 
+# Pygame graphics (Needed for human players)
+graphics = False
+
 # Who plays as White and Black
 W_Player = "random_bot"
 B_Player = "random_bot"
