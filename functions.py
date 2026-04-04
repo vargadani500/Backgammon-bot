@@ -20,6 +20,7 @@ class Board:
         self.winner = 0
 
     def set(self):
+        self.winner = 0
         self.state = np.zeros(28, int)
         self.state[0] = 2
         self.state[5] = -5
@@ -36,6 +37,7 @@ class Board:
     def get_valid_moves(self, dice):
         state = self.state*dice.turn # Same color will be pos
         valid_moves = []
+
         # General case
         if (state[24:26] < 1).all():
             for d in set(dice.remaining):
@@ -47,6 +49,7 @@ class Board:
                     for i in range(d, 24):
                         if state[i] > 0 and state[i-d] >= -1:
                             valid_moves.append((i, i-d, d))
+
         # if we have a piece removed
         else:
             for d in set(dice.remaining):
@@ -56,7 +59,8 @@ class Board:
                 else:
                     if state[25] > 0 and state[24-d] >= -1:
                         valid_moves.append((25, 24-d, d))
-        # if all pieces are in the house, then bear off
+
+        # Bear off for white
         if dice.turn == 1 and (state[:18]<1).all():
             for d in set(dice.remaining):
                 if state[24-d] > 0:
@@ -67,6 +71,7 @@ class Board:
                         if state[p] > 0:
                             valid_moves.append((p, 26, d))
                             break
+        # Bear off for black
         elif dice.turn == -1 and (state[6:24]<1).all():
             for d in set(dice.remaining):
                 if state[d-1] > 0:
@@ -77,12 +82,17 @@ class Board:
                         if state[p] > 0:
                             valid_moves.append((p, 27, d))
                             break
+
+        # Switching turns when necessary
         if len(valid_moves) == 0:
             dice.turn *= -1
             dice.remaining = []
         return valid_moves
 
+
     def make_move(self, dice, move):
+        if move is None:
+            return self.state
         # Checking for hits
         if self.state[move[0]] * self.state[move[1]] < 0:
             # Moving the removed piece in its new place
@@ -101,7 +111,7 @@ class Board:
             self.winner = 1
             #Temp
             print("White won")
-        elif self.state[27] == 15:
+        elif self.state[27] == -15:
             self.winner = -1
             #Temp
             print("Black won")
@@ -113,6 +123,33 @@ class Board:
         if len(dice.remaining) == 0:
             dice.turn *= -1 # This changes color
 
+        # Returning board state
+        return self.state
+
+    def get_valid_pairs(self, dice):
+        if self.winner != 0:
+            return []
+        # Get valid fist moves
+        first_moves = self.get_valid_moves(dice)
+        valid_pairs = []
+        # Go through all possible first moves
+        for move in first_moves:
+            # Making a copy of the board and dice (avoiding pointers)
+            ghost = Board()
+            g_dice = Dice()
+            g_dice.turn = dice.turn
+            g_dice.remaining = dice.state
+            g_dice.remaining = list(dice.remaining)
+            ghost.state = self.state.copy()
+            # Get valid second moves for this first move
+            ghost.make_move(g_dice, move)
+            valid_pairs += [(move, i) for i in ghost.get_valid_moves(g_dice)]
+
+        # Returning pairs with only one move, if no actual pairs exist
+        if len(valid_pairs) == 0:
+            return [(move, None) for move in first_moves]
+        else:
+            return valid_pairs
 
 class Dice:
     def __init__(self, x=0, y=0, size=50):
