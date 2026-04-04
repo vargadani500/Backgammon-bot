@@ -47,7 +47,7 @@ def main():
         roll_button.draw(Screen)
         # Board
         draw_board(Screen)
-        draw_pieces(Screen, board.state)
+        board.draw_pieces(Screen)
         # Clock for fps
         pygame.time.Clock().tick(fps)
         # This updates the screen
