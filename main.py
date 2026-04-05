@@ -45,7 +45,7 @@ def main():
             board.set()
             total_games += 1
             if total_games % 100 == 0:
-                print(f"Total games: {total_games}\nCurrent standing: {int(total_games/2-sum_of_wins/2)}:{int(total_games/2+sum_of_wins/2)}")
+                print(f"Total games: {total_games}\nCurrent standing: ({settings.B_Player}){int(total_games/2-sum_of_wins/2)}:{int(total_games/2+sum_of_wins/2)}({settings.W_Player})")
 
         # Pygame graphics
         if settings.graphics:

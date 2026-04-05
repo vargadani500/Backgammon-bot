@@ -10,19 +10,19 @@ from functions import *
 # turn = (path, state)
 
 
-def scorer(state):
-    score = 0.0 # Positive favors white
-
-    # Pieces removed
-    score -= state[24]*15 # White
-    score -= state[25]*15 # Black
-
-    # Bearing off
-    score += state[26]*5 # White
-    score += state[27]*5 # Black
-
+def scorer(state, color):
+    score = 0 # Positive favors white
+    pips = 0 # IDE was complaining?
 
     for i, cell in enumerate(state[:24]):
+        # Pip count
+        pips = 0
+        if cell > 0:
+            pips -= cell * (24 - i)
+        if cell < 0:
+            pips -= cell * (i + 1)
+        score += pips
+
         # Anchors
         if cell > 1 and i<6:
             score += 10
@@ -44,14 +44,24 @@ def scorer(state):
             score += 3
         if cell < -1 and i+1<24 and state[i+1] < -1:
             score -= 3
-        # Pip count
-        pips = 0 # for easier printing
-        if cell > 0:
-            pips -= cell*(24-i)
-        if cell < 0:
-            pips -= cell*(i+1)
-        score += pips/2
-    return score
+        # Blocking respawn
+        if i > 17 and cell > 1:
+            score += 5
+        if i < 6  and cell < -1:
+            score-= 5
+
+    # Bearing off (Theoretically near optimal)
+    score += state[26] * 20  # White
+    score += state[27] * 20  # Black
+
+    # Hits
+    if color*pips > 0: # Winning (Defense)
+        score -= state[24] * 10  # White
+        score -= state[25] * 10  # Black
+    else: # Losing (Attack)
+        score -= state[24] * 40  # White
+        score -= state[25] * 40  # Black
+    return score*color
 
 
 def random_bot(board, dice):
@@ -67,7 +77,7 @@ def greedy_bot(board, dice):
     # Finding the move with the highest score
     for path, state in zip(*turns):
         # Positive is our color now
-        score = scorer(state)*dice.turn
+        score = scorer(state, dice.turn)
         if score > best_move[1]:
             best_move = [path, score]
     return best_move[0]
