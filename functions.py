@@ -32,8 +32,6 @@ class Board:
         self.state[18] = 5
         self.state[23] = -2
 
-    def click(self):
-        self.set()
 
     def get_valid_moves(self, dice):
         state = [i*dice.turn for i in self.state] # Same color will be pos
@@ -265,10 +263,6 @@ class Dice:
             [self.remaining.append(i) for i in self.state]
 
 
-    def click(self):
-        self.roll() # Roll on click
-
-
     def __str__(self):
         # This is for printing
         return f"{self.state[0]}, {self.state[1]}"
@@ -332,11 +326,11 @@ class Button:
         text_surf = comic_sans.render(self.text, True, (0, 0, 0))
         surface.blit(text_surf, text_surf.get_rect(center=self.rect.center))
 
-    def handle_event(self, event, dice_object):
+    def check(self, event):
         # Trigger the click event of the object
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
-                dice_object.click()
+                print(self.text)
                 return True
         return False
 

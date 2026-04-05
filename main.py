@@ -67,9 +67,10 @@ def main():
                     if dice.remaining:
                         dice.turn *= -1
                         human_turn = False
-                    else:
-                        roll_button.handle_event(event, dice)
-                if restart_button.handle_event(event, board):
+                    elif roll_button.check(event):
+                        dice.roll()
+                if restart_button.check(event):
+                    board.set()
                     dice.turn = 1
                     dice.remaining = ()
                 if event.type == pygame.QUIT:

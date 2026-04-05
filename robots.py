@@ -25,9 +25,9 @@ def scorer(state, color):
 
         # Anchors
         if cell > 1 and i<6:
-            score += 10
+            score += i*2
         if cell < -1 and i>17:
-            score -= 10
+            score -= (24-i)*2
         # Pieces in danger
         if cell == 1:
             if any([j < 0 for j in state[i+1:min(24, i+7)]]):
@@ -59,8 +59,8 @@ def scorer(state, color):
         score -= state[24] * 10  # White
         score -= state[25] * 10  # Black
     else: # Losing (Attack)
-        score -= state[24] * 40  # White
-        score -= state[25] * 40  # Black
+        score -= state[24] * 30  # White
+        score -= state[25] * 30  # Black
     return score*color
 
 
