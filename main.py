@@ -1,7 +1,4 @@
 import sys
-
-import pygame
-
 from robots import *
 
 if settings.graphics:
@@ -35,7 +32,6 @@ def main():
         # Making moves
         if not human_turn:
             if board.winner == 0:
-                dice.turn *= -1
                 if dice.turn == 1:
                     # Check if human player
                     if settings.W_Player == "human":
@@ -52,9 +48,10 @@ def main():
                         dice.roll()
                         # Get the bots decision
                         turn = black_bot(board, dice)
-                if dice.remaining:
+                if not human_turn:
                     for move in turn:
                         board.make_move(dice, move)
+                    dice.turn *= -1
             else:
                 sum_of_wins += board.winner
                 board.winner = 0
@@ -67,8 +64,14 @@ def main():
         if settings.graphics:
             for event in pygame.event.get():
                 if not board.get_valid_turns(dice)[0]:
-                    roll_button.handle_event(event, dice)
-                restart_button.handle_event(event, board)
+                    if dice.remaining:
+                        dice.turn *= -1
+                        human_turn = False
+                    else:
+                        roll_button.handle_event(event, dice)
+                if restart_button.handle_event(event, board):
+                    dice.turn = 1
+                    dice.remaining = ()
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -83,6 +86,8 @@ def main():
                             break
                     if not move:
                         print("Not a valid move")
+                        print("Your move:", start_pos, end_pos)
+                        print("Valid moves:", *board.get_valid_moves(dice))
                         break
                     in_a_turn = False
                     for turn in board.get_valid_turns(dice)[0]:
@@ -94,6 +99,7 @@ def main():
                         break
                     board.make_move(dice, move)
                     if not dice.remaining:
+                        dice.turn *= -1
                         human_turn = False
 
             clear(Screen)

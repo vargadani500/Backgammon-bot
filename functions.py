@@ -290,12 +290,19 @@ class Dice:
         rect2 = pygame.Rect(self.x + self.size + spacing, self.y, self.size, self.size)
 
         # Draw dices
-        pygame.draw.rect(surface, dice_color, rect1)
-        pygame.draw.rect(surface, border_color, rect1, 2)
+        if self.state[0] in self.remaining:
+            pygame.draw.rect(surface, dice_color, rect1)
+            pygame.draw.rect(surface, border_color, rect1, 2)
+        else:
+            pygame.draw.rect(surface, (100, 100, 100), rect1)
+            pygame.draw.rect(surface, border_color, rect1, 2)
 
-        pygame.draw.rect(surface, dice_color, rect2)
-        pygame.draw.rect(surface, border_color, rect2, 2)
-
+        if self.state[1] in self.remaining:
+            pygame.draw.rect(surface, dice_color, rect2)
+            pygame.draw.rect(surface, border_color, rect2, 2)
+        else:
+            pygame.draw.rect(surface, (100, 100, 100), rect2)
+            pygame.draw.rect(surface, border_color, rect2, 2)
         # Text on dices
         text1_surface = sys_font.render(str(self.state[0]), True, text_color)
         text1_rect = text1_surface.get_rect(center=rect1.center)
@@ -330,6 +337,8 @@ class Button:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
                 dice_object.click()
+                return True
+        return False
 
 
 def draw_board(surface):
@@ -388,9 +397,9 @@ def get_point_from_mouse(pos):
     # Check if clicking on Bear Off
     if chip_size * 6.5 < x < chip_size * 8:
         if y < y_mid:
-            return 26
-        else:
             return 27
+        else:
+            return 26
 
     field = 0
     if y > y_offset:
