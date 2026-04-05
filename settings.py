@@ -3,13 +3,13 @@
 chip_size = 50
 
 # Pygame graphics (Needed for human players)
-graphics = False
+graphics = True
 
-# Frames per second
-fps = 2
+# Moves per second
+mps = .5
 
 # Who plays as White and Black
-W_Player = "random_bot"
+W_Player = "human"
 B_Player = "greedy_bot"
 
 Height = 14.5*chip_size

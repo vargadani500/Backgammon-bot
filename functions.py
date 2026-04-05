@@ -1,4 +1,4 @@
-import pygame, settings, random
+import math, pygame, settings, random
 
 # Importing from settings, the main file uses this
 chip_size = settings.chip_size
@@ -371,3 +371,38 @@ def draw_board(surface):
 
 def clear(surface):
     surface.fill((50, 50, 50))
+
+
+def get_point_from_mouse(pos):
+    x, y = pos
+    y_offset = 2.5 * chip_size
+    y_mid = (settings.Height-y_offset) / 2 + y_offset
+
+    # Check if clicking on removed pieces (Bar)
+    if chip_size * 6.5 < x < chip_size * 8 and chip_size * 6.75 < y < chip_size * 9.75:
+        if y > y_mid:
+            return 25
+        else:
+            return 24
+
+    # Check if clicking on Bear Off
+    if chip_size * 6.5 < x < chip_size * 8:
+        if y < y_mid:
+            return 26
+        else:
+            return 27
+
+    field = 0
+    if y > y_offset:
+        field += (settings.Width / chip_size) - (x / chip_size) - .5
+        if field > 7:
+            field -= 1.5
+        if not 0 < field < 12:
+            return None
+        if y > y_mid:
+            field = 24-field
+        if y > 14*chip_size:
+            return None
+        return math.floor(field)
+
+    return None  # Clicked outside valid areas

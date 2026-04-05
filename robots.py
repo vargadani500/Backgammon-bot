@@ -55,13 +55,17 @@ def scorer(state, color):
     score += state[27] * 20  # Black
 
     # Hits
-    if color*pips > 0: # Winning (Defense)
+    if color*pips > 10: # Winning (Defense)
         score -= state[24] * 10  # White
         score -= state[25] * 10  # Black
     else: # Losing (Attack)
         score -= state[24] * 40  # White
         score -= state[25] * 40  # Black
     return score*color
+
+
+def human(board, dice):
+    return []
 
 
 def random_bot(board, dice):
