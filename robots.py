@@ -136,3 +136,84 @@ def hard_bot(board, dice): # Somehow kinda worse
         board.winner = save_winner
 
     return best_move[0]
+
+
+
+
+
+#the rate of moves left before winning
+#white=pos is the bot
+def potential(board_state):
+    neg=0
+    pos=0
+    for i in range(24):
+        if board_state[i] > 0:
+            pos += board_state[i]*(i+1)
+        elif board_state[i] < 0:
+            neg -= board_state[i]*(24-i)
+    pos += board_state[24]*25
+    neg += board_state[25]*25
+    if neg!=0:
+        pot = 1-pos/neg
+    else:
+        pot=-1
+    return pot
+#output is positive if the bot is leading
+
+
+def botond(board, dice):
+    best_movee = [[], float("-inf")]
+
+    agressivness= potential(board.state)
+
+    mainpaths=board.get_valid_turns(dice)
+
+    try_dice=Dice()
+    try_dice.turn= -1*dice.turn
+    try_board=Board()
+
+    #the value of mainpaths
+    for num in range(len(mainpaths[1])):
+        states=mainpaths[1][num]
+
+
+        rolls=[]
+        for i in range(6):
+            for j in range(6-i):
+
+                #one enemy roll
+                try_board.state = list(states)
+                try_board.winner = board.winner
+                try_dice.roll((i+1,j+1))
+                experimental_states=try_board.get_valid_turns(try_dice)
+                if len(experimental_states[1])>0:
+                    rolls.append( min(potential(enemy_board) for enemy_board in experimental_states[1]))
+                else:
+                    rolls.append(agressivness)
+
+        #counting
+        exp_value= sum(rolls)
+        rolls.sort(reverse=True)
+        agr_exp_value=sum(rolls[0:(1+int(min(len(rolls),(len(rolls)+agressivness*len(rolls)))))])
+
+
+        #agressive strategy
+        crashes=0
+        #pos is the bot
+
+        neg=0
+        for i in states[0:23]:
+            if i>0:
+                crashes+=i*neg
+            elif i<0:
+                neg+=-i
+        crashes+=states[24]*neg
+        crashes+=states[25]*(15-states[26])
+
+        #final value
+        finval=exp_value+agr_exp_value+crashes*agressivness*0.1
+        if finval>best_movee[1]:
+            best_movee[0]=mainpaths[0][num]
+            best_movee[1]=finval
+
+    return best_movee[0]
