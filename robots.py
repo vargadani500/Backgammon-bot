@@ -11,23 +11,21 @@ from functions import *
 
 
 def scorer(state, color):
-    score = 0 # Positive favors white
+    score = .0 # Positive favors white
     pips = 0 # IDE was complaining?
 
     for i, cell in enumerate(state[:24]):
         # Pip count
-        pips = 0
         if cell > 0:
             pips -= cell * (24 - i)
         if cell < 0:
             pips -= cell * (i + 1)
-        score += pips
 
         # Anchors
         if cell > 1 and i<6:
             score += i*2
         if cell < -1 and i>17:
-            score -= (24-i)*2
+            score -= (23-i)*2
         # Pieces in danger
         if cell == 1:
             if any([j < 0 for j in state[i+1:min(24, i+7)]]):
@@ -50,6 +48,8 @@ def scorer(state, color):
         if i < 6  and cell < -1:
             score-= 5
 
+    score += pips/2
+
     # Bearing off (Theoretically near optimal)
     score += state[26] * 20  # White
     score += state[27] * 20  # Black
@@ -59,8 +59,8 @@ def scorer(state, color):
         score -= state[24] * 10  # White
         score -= state[25] * 10  # Black
     else: # Losing (Attack)
-        score -= state[24] * 30  # White
-        score -= state[25] * 30  # Black
+        score -= state[24] * 40  # White
+        score -= state[25] * 40  # Black
     return score*color
 
 
@@ -75,13 +75,58 @@ def random_bot(board, dice):
     return random.choice(paths)
 
 
-def greedy_bot(board, dice):
+def greedy_bot(board, dice, return_state=False):
     turns = board.get_valid_turns(dice)
-    best_move = [[], float("-inf")]
+    best_move = [[], float("-inf"), board.state]
     # Finding the move with the highest score
     for path, state in zip(*turns):
-        # Positive is our color now
         score = scorer(state, dice.turn)
         if score > best_move[1]:
+            best_move = [path, score, state]
+    if return_state:
+        return best_move[2]
+    return best_move[0]
+
+
+def hard_bot(board, dice): # Somehow kinda worse
+    # Expectiminimax algorithm
+    turns = board.get_valid_turns(dice)
+    best_move = [[], float("-inf")]
+
+    # Getting 21 unique rolls with weights
+    unique_rolls = []
+    for i in range(1, 7):
+        for j in range(i, 7):
+            weight = 1 if i == j else 2
+            unique_rolls.append(((i, j), weight))
+
+
+    # Finding the move with the highest expected outcome
+    for path, state in zip(*turns):
+        score = 0
+
+        # Saving the state
+        save_state = board.state[:]
+        remaining_state = dice.remaining[:]
+        save_dice = dice.state[:]
+
+        # Making the move for further calculation
+        for move in path:
+            board.make_move(dice, move)
+
+        dice.turn *= -1
+        for roll, weight in unique_rolls:
+            dice.roll(roll)
+            greedy_state = greedy_bot(board, dice, True)
+            score += scorer(greedy_state, dice.turn*-1) * weight
+
+        if score > best_move[1]:
             best_move = [path, score]
+
+        # Loading original state
+        dice.turn *= -1
+        dice.state = save_dice
+        dice.remaining = remaining_state
+        board.state = save_state
+
     return best_move[0]

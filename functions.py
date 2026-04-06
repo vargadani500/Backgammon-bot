@@ -247,16 +247,17 @@ class Board:
 class Dice:
     def __init__(self, x=0, y=0):
         # The turn color is 1 for white, -1 for black
-        self.turn = -1
+        self.turn = 1
         self.x = x
         self.y = y
         self.remaining = []
         self.state = (6, 6)
         self.size = chip_size
 
-    def roll(self):
+    def roll(self, value=None):
         self.remaining = []
-        self.state = (random.randint(1, 6), random.randint(1, 6))
+        if value is None:
+            self.state = (random.randint(1, 6), random.randint(1, 6))
         if self.state[0] == self.state[1]:
             [self.remaining.append(self.state[0]) for _ in range(4)]
         else:
@@ -330,7 +331,6 @@ class Button:
         # Trigger the click event of the object
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
-                print(self.text)
                 return True
         return False
 

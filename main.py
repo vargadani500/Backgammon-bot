@@ -51,15 +51,17 @@ def main():
                 if not human_turn:
                     for move in turn:
                         board.make_move(dice, move)
+                    dice.remaining = ()
                     dice.turn *= -1
             else:
                 sum_of_wins += board.winner
                 board.winner = 0
                 board.set()
                 total_games += 1
-                if total_games % 100 == 0:
+                if total_games % 10 == 0:
                     print(f"Total games: {total_games}\nCurrent standing: ({settings.B_Player}){int(total_games/2-sum_of_wins/2)}:{int(total_games/2+sum_of_wins/2)}({settings.W_Player})")
 
+        # pygame.time.Clock().tick(settings.mps)
         # Pygame graphics
         if settings.graphics:
             for event in pygame.event.get():
@@ -81,6 +83,8 @@ def main():
                 if event.type == pygame.MOUSEBUTTONUP and human_turn:
                     end_pos = get_point_from_mouse(pygame.mouse.get_pos())
                     move = ()
+                    if start_pos is None or end_pos is None:
+                        break
                     for i in board.get_valid_moves(dice):
                         if start_pos == i[0] and end_pos == i[1]:
                             move = i
