@@ -10,7 +10,7 @@ mps = .5
 
 # Who plays as White and Black
 B_Player = "hard_bot"
-W_Player = "greedy_bot"
+W_Player = "human"
 
 Height = 14.5*chip_size
 Width = 14.5*chip_size

@@ -10,7 +10,7 @@ from functions import *
 # turn = (path, state)
 
 
-def scorer(state, color):
+def scorer(state, color, greedy = True):
     score = .0 # Positive favors white
     pips = 0 # IDE was complaining?
 
@@ -27,16 +27,17 @@ def scorer(state, color):
         if cell < -1 and i>17:
             score -= (23-i)*2
         # Pieces in danger
-        if cell == 1:
-            if any([j < 0 for j in state[i+1:min(24, i+7)]]):
-                score -= 10
-            elif i >  17 and state[25] != 0:
-                score -= 10
-        if cell == -1:
-            if any([j > 0 for j in state[max(0, i-6):i]]):
-                score += 10
-            elif i < 6 and state[24] != 0:
-                score += 10
+        if greedy:
+            if cell == 1:
+                if any([j < 0 for j in state[i+1:min(24, i+7)]]):
+                    score -= 10
+                elif i >  17 and state[25] != 0:
+                    score -= 10
+            if cell == -1:
+                if any([j > 0 for j in state[max(0, i-6):i]]):
+                    score += 10
+                elif i < 6 and state[24] != 0:
+                    score += 10
         # Blocking
         if cell > 1 and i+1<24 and state[i+1] > 1:
             score += 3
@@ -59,8 +60,8 @@ def scorer(state, color):
         score -= state[24] * 10  # White
         score -= state[25] * 10  # Black
     else: # Losing (Attack)
-        score -= state[24] * 40  # White
-        score -= state[25] * 40  # Black
+        score -= state[24] * 30  # White
+        score -= state[25] * 30  # Black
     return score*color
 
 
@@ -106,6 +107,7 @@ def hard_bot(board, dice): # Somehow kinda worse
         score = 0
 
         # Saving the state
+        save_winner = board.winner
         save_state = board.state[:]
         remaining_state = dice.remaining[:]
         save_dice = dice.state[:]
@@ -118,7 +120,7 @@ def hard_bot(board, dice): # Somehow kinda worse
         for roll, weight in unique_rolls:
             dice.roll(roll)
             greedy_state = greedy_bot(board, dice, True)
-            score += scorer(greedy_state, dice.turn*-1) * weight
+            score += scorer(greedy_state, dice.turn*-1, False) * weight
 
         if score > best_move[1]:
             best_move = [path, score]
@@ -128,5 +130,6 @@ def hard_bot(board, dice): # Somehow kinda worse
         dice.state = save_dice
         dice.remaining = remaining_state
         board.state = save_state
+        board.winner = save_winner
 
     return best_move[0]

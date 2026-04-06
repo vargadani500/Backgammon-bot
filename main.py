@@ -58,7 +58,7 @@ def main():
                 board.winner = 0
                 board.set()
                 total_games += 1
-                if total_games % 10 == 0:
+                if total_games % 1 == 0:
                     print(f"Total games: {total_games}\nCurrent standing: ({settings.B_Player}){int(total_games/2-sum_of_wins/2)}:{int(total_games/2+sum_of_wins/2)}({settings.W_Player})")
 
         # pygame.time.Clock().tick(settings.mps)

@@ -258,6 +258,8 @@ class Dice:
         self.remaining = []
         if value is None:
             self.state = (random.randint(1, 6), random.randint(1, 6))
+        else:
+            self.state = (value[0], value[1])
         if self.state[0] == self.state[1]:
             [self.remaining.append(self.state[0]) for _ in range(4)]
         else:
