@@ -12,20 +12,20 @@ from functions import *
 
 def scorer(state, color, greedy = True):
     score = .0 # Positive favors white
-    pips = 0 # IDE was complaining?
+    w_pips = 0
+    b_pips = 0
 
     for i, cell in enumerate(state[:24]):
         # Pip count
         if cell > 0:
-            pips -= cell * (24 - i)
+            dist = 24 - i
+            w_pips -= cell * dist
+            score -= cell * ((dist ** 2) / 12) # Against stragglers
         if cell < 0:
-            pips -= cell * (i + 1)
+            dist = i + 1
+            b_pips -= cell * dist
+            score += abs(cell) * ((dist ** 2) / 12) # Against stragglers
 
-        # Anchors
-        if cell > 1 and i<6:
-            score += i*2
-        if cell < -1 and i>17:
-            score -= (23-i)*2
         # Pieces in danger
         if greedy:
             if cell == 1:
@@ -49,14 +49,12 @@ def scorer(state, color, greedy = True):
         if i < 6  and cell < -1:
             score-= 5
 
-    score += pips/2
-
-    # Bearing off (Theoretically near optimal)
+    # Bearing off
     score += state[26] * 20  # White
     score += state[27] * 20  # Black
 
     # Hits
-    if color*pips > 10: # Winning (Defense)
+    if color*(w_pips + b_pips) > 10: # Winning (Defense)
         score -= state[24] * 10  # White
         score -= state[25] * 10  # Black
     else: # Losing (Attack)
@@ -101,9 +99,14 @@ def hard_bot(board, dice): # Somehow kinda worse
             weight = 1 if i == j else 2
             unique_rolls.append(((i, j), weight))
 
+    # Pruning
+    scored_paths = []
+    for path, state in zip(*turns):
+        scored_paths.append(((path, state), scorer(state, dice.turn)))
+    scored_paths.sort(key=lambda x: x[1], reverse=True)
 
     # Finding the move with the highest expected outcome
-    for path, state in zip(*turns):
+    for (path, state), _ in scored_paths[:10]:
         score = 0
 
         # Saving the state
