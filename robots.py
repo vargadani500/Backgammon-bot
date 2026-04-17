@@ -64,8 +64,8 @@ def scorer(state, color, greedy = True):
             score-= 5
 
     # Bearing off
-    score += state[26] * 20  # White
-    score += state[27] * 20  # Black
+    score += state[26] * 5  # White
+    score += state[27] * 5  # Black
 
     # Hits
     if color*(w_pips + b_pips) > 10: # Winning (Defense)
