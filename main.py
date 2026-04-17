@@ -58,10 +58,13 @@ def main():
                 board.winner = 0
                 board.set()
                 total_games += 1
-                if total_games % 100 == 0:
+                if total_games % settings.summation == 0:
                     print(f"Total games: {total_games}\nCurrent standing: ({settings.B_Player}){int(total_games/2-sum_of_wins/2)}:{int(total_games/2+sum_of_wins/2)}({settings.W_Player})")
 
-        # pygame.time.Clock().tick(settings.mps)
+        # Slow down, for following robot moves
+        if settings.mps and settings.graphics:
+            pygame.time.Clock().tick(settings.mps)
+
         # Pygame graphics
         if settings.graphics:
             for event in pygame.event.get():
@@ -116,7 +119,7 @@ def main():
             draw_board(Screen)
             board.draw_pieces(Screen)
             # Clock for fps
-            pygame.time.Clock().tick(60)
+            pygame.time.Clock().tick(settings.fps)
             # This updates the screen
             pygame.display.update()
 

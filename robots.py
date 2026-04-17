@@ -9,22 +9,36 @@ from functions import *
 
 # turn = (path, state)
 
+def inversion(state):
+    count = 0
+    for i in range(26):
+        if state[i] < 0: # if black
+            whites = sum(abs(state[j]) for j in range(i) if state[j] > 0)
+            count -= whites*state[i]
+    return count
+
 
 def scorer(state, color, greedy = True):
-    score = .0 # Positive favors white
+    score = 0 # Positive favors white
+    straggler_tax = 0
     w_pips = 0
     b_pips = 0
-
     for i, cell in enumerate(state[:24]):
         # Pip count
         if cell > 0:
             dist = 24 - i
             w_pips -= cell * dist
-            score -= cell * ((dist ** 2) / 12) # Against stragglers
+            score -= cell * (dist ** 2) / 100 # Against stragglers
         if cell < 0:
             dist = i + 1
             b_pips -= cell * dist
-            score += abs(cell) * ((dist ** 2) / 12) # Against stragglers
+            score += abs(cell) * (dist ** 2) / 100 # Against stragglers
+
+        # Anchor counting
+        if cell < -1 and i > 17 and (w_pips + b_pips) > 20:
+            score -= (23 - i) * 2
+        elif cell > 1 and i < 6 and (w_pips + b_pips) < 20:
+            score += i * 2
 
         # Pieces in danger
         if greedy:
@@ -57,14 +71,27 @@ def scorer(state, color, greedy = True):
     if color*(w_pips + b_pips) > 10: # Winning (Defense)
         score -= state[24] * 10  # White
         score -= state[25] * 10  # Black
+        score -= inversion(state) / 10
     else: # Losing (Attack)
         score -= state[24] * 30  # White
         score -= state[25] * 30  # Black
+        score += inversion(state) / 10
+
     return score*color
 
 
+# Getting 21 unique rolls with weights
+def get_rolls():
+    unique_rolls = []
+    for i in range(1, 7):
+        for j in range(i, 7):
+            weight = 1 if i == j else 2
+            unique_rolls.append(((i, j), weight))
+    return unique_rolls
+
+
 def human(board, dice):
-    return []
+    raise Exception("This is shouldn't be called upon")
 
 
 def random_bot(board, dice):
@@ -88,7 +115,7 @@ def greedy_bot(board, dice, return_state=False):
 
 
 def hard_bot(board, dice): # Somehow kinda worse
-    # Expectiminimax algorithm
+    # Expectiminimax algorithm (2-ply)
     turns = board.get_valid_turns(dice)
     best_move = [[], float("-inf")]
 
@@ -120,7 +147,7 @@ def hard_bot(board, dice): # Somehow kinda worse
             board.make_move(dice, move)
 
         dice.turn *= -1
-        for roll, weight in unique_rolls:
+        for roll, weight in get_rolls():
             dice.roll(roll)
             greedy_state = greedy_bot(board, dice, True)
             score += scorer(greedy_state, dice.turn*-1, False) * weight
