@@ -178,9 +178,9 @@ class Dice:
         else:
             self.state = (value[0], value[1])
         if self.state[0] == self.state[1]:
-            [self.remaining.append(self.state[0]) for _ in range(4)]
+            self.remaining = [self.state[0]] * 4
         else:
-            [self.remaining.append(i) for i in self.state]
+            self.remaining = list(self.state)
 
 
     def __str__(self):

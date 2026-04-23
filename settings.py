@@ -8,8 +8,8 @@ mps = 0
 # Frames per second
 fps = 60
 # How often the wins get summed and printed (Might affect performance)
-summation = 10
+summation = 1000
 
 # Who plays as White and Black
-B_Player = "greedy_bot"
-W_Player = "greedy_bot"
+B_Player = "random_bot"
+W_Player = "random_bot"
