@@ -20,7 +20,6 @@ def inversion(state):
 
 def scorer(state, color, greedy = True):
     score = 0 # Positive favors white
-    straggler_tax = 0
     w_pips = 0
     b_pips = 0
     for i, cell in enumerate(state[:24]):
@@ -68,14 +67,15 @@ def scorer(state, color, greedy = True):
     score += state[27] * 5  # Black
 
     # Hits
+    inv = inversion(state)
     if color*(w_pips + b_pips) > 10: # Winning (Defense)
         score -= state[24] * 10  # White
         score -= state[25] * 10  # Black
-        score -= inversion(state) / 10
+        score -= inv / 10
     else: # Losing (Attack)
         score -= state[24] * 30  # White
         score -= state[25] * 30  # Black
-        score += inversion(state) / 10
+        score += inv / 10
 
     return score*color
 
@@ -114,7 +114,7 @@ def greedy_bot(board, dice, return_state=False):
     return best_move[0]
 
 
-def hard_bot(board, dice): # Somehow kinda worse
+def hard_bot(board, dice):
     # Expectiminimax algorithm (2-ply)
     turns = board.get_valid_turns(dice)
     best_move = [[], float("-inf")]

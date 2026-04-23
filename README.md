@@ -31,3 +31,12 @@ You can customize the game rules and players by editing the `settings.py` file.
 
 * **Roll:** Click the "Roll" button
 * **Moving:** Click and drag the chip to target position (invalid moves/turns are noted in the console)
+
+## Test results
+
+| Bots           | random_bot | greedy_bot | hard_bot | botond |
+|:---------------|:-----------|:-----------|:---------|:-------|
+| **random_bot** | 5094:4906  | 988:12     | 99:1     | 98:2   |
+| **greedy_bot** |            | 506:494    | 65:35    | 16:84  |
+| **hard_bot**   |            |            | 49:51    | 25:75  |
+| **botond**     |            |            |          | 49:51  |

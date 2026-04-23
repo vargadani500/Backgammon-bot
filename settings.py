@@ -9,11 +9,11 @@ graphics = False
 # Should only be used in bot vs bot
 mps = 0
 fps = 60
-summation = 100 # How often the wins get summed
+summation = 1 # How often the wins get summed
 
 # Who plays as White and Black
-B_Player = "greedy_bot"
-W_Player = "greedy_bot"
+B_Player = "botond"
+W_Player = "botond"
 
 Height = 14.5*chip_size
 Width = 14.5*chip_size
