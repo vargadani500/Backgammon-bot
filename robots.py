@@ -127,7 +127,7 @@ def hard_bot(board, dice):
             unique_rolls.append(((i, j), weight))
 
     # Finding the move with the highest expected outcome
-    for (path, state), _ in turns:
+    for path, state in zip(*turns):
         score = 0
 
         # Saving the state
