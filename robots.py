@@ -90,7 +90,7 @@ def get_rolls():
     return unique_rolls
 
 
-def human(board, dice):
+def human():
     raise Exception("This is shouldn't be called upon")
 
 

@@ -18,14 +18,13 @@ pip install pygame
 
 You can customize the game rules and players by editing the `settings.py` file. 
 
-| Setting                 | Description                                                                                      | Options / Notes                                                     |
-|:------------------------|:-------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------|
-| `W_Player` / `B_Player` | Determines who controls White and Black.                                                         | `"human"`, `"random_bot"`, `"greedy_bot"`, `"hard_bot"`, `"botond"` |
-| `graphics`              | Toggles the Pygame graphical interface.                                                          | `True` (UI gameplay) or `False` (headless simulations)              |
-| `chip_size`             | Base unit for rendering; scales the entire board and window size.                                | Integer (default: `50`)                                             |
-| `mps`                   | Moves Per Second. Useful for slowing down bot vs. bot matches to watch their moves.              | `0` for off; cannot exceed `fps`                                    |
-| `fps`                   | The frame rate limit for the Pygame window.                                                      | Integer (default: `60`)                                             |
-| `summation`             | Defines how often the win/loss record is printed to the console during headless bot simulations. | Integer (default: `1`)                                              |
+| Setting                 | Description                                                                         | Options / Notes                                                     |
+|:------------------------|:------------------------------------------------------------------------------------|:--------------------------------------------------------------------|
+| `W_Player` / `B_Player` | Determines who controls White and Black.                                            | `"human"`, `"random_bot"`, `"greedy_bot"`, `"hard_bot"`, `"botond"` | | `True` (UI gameplay) or `False` (headless simulations)              |
+| `chip_size`             | Base unit for rendering; scales the entire board and window size.                   | Integer (default: `50`)                                             |
+| `mps`                   | Moves Per Second. Useful for slowing down bot vs. bot matches to watch their moves. | `0` for off; cannot exceed `fps`                                    |
+| `fps`                   | The frame rate limit for the Pygame window.                                         | Integer (default: `60`)                                             |
+| `summation`             | Defines how often the win/loss record is printed to the console.                    | Integer (default: `1`)                                              |
 
 ## Controls
 
@@ -38,5 +37,5 @@ You can customize the game rules and players by editing the `settings.py` file.
 |:---------------|:-------------|:-----------|:---------|:-------|
 | **random_bot** | 100048:99952 | 988:12     | 99:1     | 98:2   |
 | **greedy_bot** |              | 506:494    | 65:35    | 16:84  |
-| **hard_bot**   |              |            | 49:51    | 25:75  |
+| **hard_bot**   |              |            | 49:51    | 13:87  |
 | **botond**     |              |            |          | 49:51  |
