@@ -126,14 +126,8 @@ def hard_bot(board, dice):
             weight = 1 if i == j else 2
             unique_rolls.append(((i, j), weight))
 
-    # Pruning
-    scored_paths = []
-    for path, state in zip(*turns):
-        scored_paths.append(((path, state), scorer(state, dice.turn)))
-    scored_paths.sort(key=lambda x: x[1], reverse=True)
-
     # Finding the move with the highest expected outcome
-    for (path, state), _ in scored_paths[:10]:
+    for (path, state), _ in turns:
         score = 0
 
         # Saving the state
