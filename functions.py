@@ -112,10 +112,10 @@ class Board:
 
 
     def get_valid_turns(self, dice):
-        # Returning nothing if the game is over
-
+        # A set for caching
         all_paths_found = []
         seen_states = set()
+        
         # First we find all possible paths
         def search_paths(board, c_dice, path):
 
@@ -161,6 +161,7 @@ class Board:
         # Returning nothing, if there are no legal moves
         if max_path_length == 0:
             return unique_paths, unique_states
+        
         # Removing duplicates
         for path, state in all_paths_found:
             if len(path) == max_path_length and state not in unique_states:
