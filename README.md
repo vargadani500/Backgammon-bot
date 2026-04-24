@@ -18,12 +18,13 @@ pip install pygame
 
 You can customize the game rules and players by editing the `settings.py` file. 
 
-| Setting                 | Description                                                                         | Options / Notes                                                     |
-|:------------------------|:------------------------------------------------------------------------------------|:--------------------------------------------------------------------|
-| `W_Player` / `B_Player` | Determines who controls White and Black.                                            | `"human"`, `"random_bot"`, `"greedy_bot"`, `"hard_bot"`, `"botond"` | | `True` (UI gameplay) or `False` (headless simulations)              |
-| `chip_size`             | Base unit for rendering; scales the entire board and window size.                   | Integer (default: `50`)                                             |
-| `fps`                   | The frame rate limit for the Pygame window.                                         | Integer (default: `60`)                                             |
-| `summation`             | Defines how often the win/loss record is printed to the console.                    | Integer (default: `1`)                                              |
+| Setting                 | Description                                                       | Options / Notes                                                      |
+|:------------------------|:------------------------------------------------------------------|:---------------------------------------------------------------------|
+| `W_Player` / `B_Player` | Determines who controls White and Black.                          | `"human"`, `"random_bot"`, `"greedy_bot"`, `"hard_bot"`, `"botond"`  |
+| `starter`               | Determines who starts                                             | Integer (default: `1`)<br/>(0 for random, 1 for white, -1 for black) |
+| `chip_size`             | Base unit for rendering; scales the entire board and window size. | Integer (default: `50`)                                              |
+| `fps`                   | The frame rate limit for the Pygame window.                       | Integer (default: `60`)                                              |
+| `summation`             | Defines how often the win/loss record is printed to the console.  | Integer (default: `1`)                                               |
 
 ## Controls
 
@@ -34,7 +35,7 @@ You can customize the game rules and players by editing the `settings.py` file.
 
 | Bots           | random_bot   | greedy_bot    | hard_bot | botond |
 |:---------------|:-------------|:--------------|:---------|:-------|
-| **random_bot** | 100048:99952 | 9831:169      | 500:0    | 98:2   |
+| **random_bot** | 48584:51416  | 9831:169      | 500:0    | 98:2   |
 | **greedy_bot** |              | 487126:512874 | 65:35    | 16:84  |
 | **hard_bot**   |              |               | 49:51    | 14:86  |
 | **botond**     |              |               |          | 49:51  |

@@ -1,5 +1,7 @@
 import random
 
+import settings
+
 
 class Board:
     def __init__(self):
@@ -165,16 +167,21 @@ class Board:
 class Dice:
     def __init__(self, x=0, y=0):
         # The turn color is 1 for white, -1 for black
-        self.turn = 1
+        if settings.starter == 0:
+            self.turn = random.choice([1, -1])
+        else:
+            self.turn = settings.starter
         self.x = x
         self.y = y
         self.remaining = []
         self.state = (6, 6)
 
-    def roll(self, value=None):
+    def roll(self, value=None,first=False):
         self.remaining = []
         if value is None:
             self.state = (random.randint(1, 6), random.randint(1, 6))
+        elif first:
+            self.state = random.sample(range(1, 7), 2)
         else:
             self.state = (value[0], value[1])
         if self.state[0] == self.state[1]:

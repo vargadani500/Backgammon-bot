@@ -16,6 +16,9 @@ def main():
     board.set()
     dice = Dice(chip_size*6, chip_size*.5)
 
+    # First roll (No doubles)
+    first = True
+
     sum_of_wins = 0
     total_games = 0
     human_turn = False
@@ -37,7 +40,11 @@ def main():
                     if settings.W_Player == "human":
                         human_turn = True
                     else:
-                        dice.roll()
+                        if first:
+                            dice.roll(first=first)
+                            first = False
+                        else:
+                            dice.roll()
                         # Get the bots decision
                         turn = white_bot(board, dice)
                 else:
@@ -45,7 +52,11 @@ def main():
                     if settings.B_Player == "human":
                         human_turn = True
                     else:
-                        dice.roll()
+                        if first:
+                            dice.roll(first=first)
+                            first = False
+                        else:
+                            dice.roll()
                         # Get the bots decision
                         turn = black_bot(board, dice)
                 if not human_turn:
@@ -54,6 +65,7 @@ def main():
                     dice.remaining = ()
                     dice.turn *= -1
             else:
+                first = True
                 sum_of_wins += board.winner
                 board.winner = 0
                 board.set()
@@ -72,7 +84,11 @@ def main():
                     dice.turn *= -1
                     human_turn = False
                 elif roll_button.check(event):
-                    dice.roll()
+                    if first:
+                        dice.roll(first=first)
+                        first = False
+                    else:
+                        dice.roll()
             if restart_button.check(event):
                 board.set()
                 dice.turn = 1

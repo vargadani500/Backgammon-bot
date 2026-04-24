@@ -13,13 +13,19 @@ def play_headless_game(dummy_arg):
 
     white_bot = globals()[settings.W_Player]
     black_bot = globals()[settings.B_Player]
+    first = True
 
     while board.winner == 0:
-        if dice.turn == 1:
-            dice.roll()
-            turn = white_bot(board, dice)
+        # First roll (No doubles)
+        if first:
+            dice.roll(first=first)
+            first = False
         else:
             dice.roll()
+
+        if dice.turn == 1:
+            turn = white_bot(board, dice)
+        else:
             turn = black_bot(board, dice)
 
         for move in turn:
