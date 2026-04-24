@@ -1,12 +1,12 @@
 # Backgammon Bot
 
-A Python-based Backgammon game featuring a fully playable graphical interface and multiple AI opponents. You can play against the computer or watch different bots battle each other.
+A Python-based Backgammon game featuring a playable graphical interface and some bots. You can play against the computer or simulate different bots battle each other.
 
 ## Features
 * **Graphical Interface:** Built with pygame for interactive gameplay
-* **Multiple AI Bots:** Ranging from random moves to Expectiminimax algorithm
+* **Multiple AI Bots:** Ranging from random moves to a 2-ply Expectiminimax algorithm
 * **Configurable Matches:** Easily set up Human vs. Bot, Bot vs. Bot, or Human vs. Human games
-* **Headless Mode:** Turn off graphics for fast-paced bot vs. bot simulations and data gathering
+* **Headless Mode:** For bot vs. bot simulations and data gathering
 
 ## Prerequisites
 This project requires Python 3 and the `pygame` library. Install the dependency using:
