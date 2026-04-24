@@ -6,11 +6,11 @@ chip_size = 50
 fps = 60
 
 # How often the wins get summed for headless (Might affect performance)
-summation = 1000
+summation = 100
 
 # 0 for random, 1 for white, -1 for black
 starter = 1
 
 # Who plays as White and Black
-B_Player = "random_bot"
-W_Player = "random_bot"
+B_Player = "hard_bot"
+W_Player = "hard_bot"
