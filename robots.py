@@ -67,7 +67,7 @@ def scorer(state, color, greedy = True):
     score += state[27] * 5  # Black
 
     # Hits
-    if color*(w_pips + b_pips) > 10: # Winning (Defense)
+    if color*(w_pips + b_pips) > 15: # Winning (Defense)
         # Bearing off logic
         if color == 1:
             if sum(state[i] for i in range(0, 18) if state[i] > 0) == 0:
@@ -88,9 +88,9 @@ def scorer(state, color, greedy = True):
     else: # Losing (Hitting is encouraged)
         if color == 1:
             score -= state[24] * 10
-            score -= state[25] * 15
+            score -= state[25] * 20
         if color == -1:
-            score -= state[24] * 15
+            score -= state[24] * 20
             score -= state[25] * 10
 
     return score*color
@@ -134,13 +134,6 @@ def hard_bot(board, dice):
     # Expectiminimax algorithm (2-ply)
     turns = board.get_valid_turns(dice)
     best_move = [[], float("-inf")]
-
-    # Getting 21 unique rolls with weights
-    unique_rolls = []
-    for i in range(1, 7):
-        for j in range(i, 7):
-            weight = 1 if i == j else 2
-            unique_rolls.append(((i, j), weight))
 
     # Finding the move with the highest expected outcome
     for path, state in zip(*turns):

@@ -34,7 +34,7 @@ You can customize the game rules and players by editing the `settings.py` file.
 
 | Bots           | random_bot   | greedy_bot | hard_bot | botond |
 |:---------------|:-------------|:-----------|:---------|:-------|
-| **random_bot** | 100048:99952 | 988:12     | 99:1     | 98:2   |
-| **greedy_bot** |              | 506:494    | 65:35    | 16:84  |
-| **hard_bot**   |              |            | 49:51    | 13:87  |
+| **random_bot** | 100048:99952 | 9831:169   | 500:0    | 98:2   |
+| **greedy_bot** |              | 4914:5086  | 65:35    | 16:84  |
+| **hard_bot**   |              |            | 49:51    | 14:86  |
 | **botond**     |              |            |          | 49:51  |
