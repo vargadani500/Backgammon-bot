@@ -67,15 +67,31 @@ def scorer(state, color, greedy = True):
     score += state[27] * 5  # Black
 
     # Hits
-    inv = inversion(state)
     if color*(w_pips + b_pips) > 10: # Winning (Defense)
-        score -= state[24] * 10  # White
-        score -= state[25] * 10  # Black
-        score -= inv / 10
-    else: # Losing (Attack)
-        score -= state[24] * 30  # White
-        score -= state[25] * 30  # Black
-        score += inv / 10
+        # Bearing off logic
+        if color == 1:
+            if sum(state[i] for i in range(0, 18) if state[i] > 0) == 0:
+                # all pieces in the house ultra defensive
+                score -= state[24] * 30 # White
+                score -= state[25] * 5 # Black
+            else:
+                score -= state[24] * 10
+                score -= state[25] * 5
+        if color == -1:
+            if sum(-state[i] for i in range(6, 24) if state[i] < 0) == 0:
+                # all pieces in the house ultra defensive
+                score -= state[24] * 5
+                score -= state[25] * 30
+            else:
+                score -= state[24] * 5
+                score -= state[25] * 10
+    else: # Losing (Hitting is encouraged)
+        if color == 1:
+            score -= state[24] * 10
+            score -= state[25] * 15
+        if color == -1:
+            score -= state[24] * 15
+            score -= state[25] * 10
 
     return score*color
 
