@@ -20,8 +20,8 @@ def inversion(state):
 
 def scorer(state, color, greedy = True):
     score = 0 # Positive favors white
-    w_pips = 0
-    b_pips = 0
+    w_pips = state[24] * -25
+    b_pips = state[25] * -25
     for i, cell in enumerate(state[:24]):
         # Pip count
         if cell > 0:
@@ -36,7 +36,7 @@ def scorer(state, color, greedy = True):
         # Anchor counting
         if cell < -1 and i > 17 and (w_pips + b_pips) > 20:
             score -= (23 - i) * 2
-        elif cell > 1 and i < 6 and (w_pips + b_pips) < 20:
+        elif cell > 1 and i < 6 and (w_pips + b_pips) < -20:
             score += i * 2
 
         # Pieces in danger
@@ -67,7 +67,7 @@ def scorer(state, color, greedy = True):
     score += state[27] * 5  # Black
 
     # Hits
-    if color*(w_pips + b_pips) > 15: # Winning (Defense)
+    if color*(w_pips + b_pips) > 20: # Winning (Defense)
         # Bearing off logic
         if color == 1:
             if sum(state[i] for i in range(0, 18) if state[i] > 0) == 0:
@@ -78,7 +78,7 @@ def scorer(state, color, greedy = True):
                 score -= state[24] * 10
                 score -= state[25] * 5
         if color == -1:
-            if sum(-state[i] for i in range(6, 24) if state[i] < 0) == 0:
+            if sum(state[i] for i in range(6, 24) if state[i] < 0) == 0:
                 # all pieces in the house ultra defensive
                 score -= state[24] * 5
                 score -= state[25] * 100
