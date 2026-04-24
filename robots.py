@@ -72,7 +72,7 @@ def scorer(state, color, greedy = True):
         if color == 1:
             if sum(state[i] for i in range(0, 18) if state[i] > 0) == 0:
                 # all pieces in the house ultra defensive
-                score -= state[24] * 30 # White
+                score -= state[24] * 100 # White
                 score -= state[25] * 5 # Black
             else:
                 score -= state[24] * 10
@@ -81,7 +81,7 @@ def scorer(state, color, greedy = True):
             if sum(-state[i] for i in range(6, 24) if state[i] < 0) == 0:
                 # all pieces in the house ultra defensive
                 score -= state[24] * 5
-                score -= state[25] * 30
+                score -= state[25] * 100
             else:
                 score -= state[24] * 5
                 score -= state[25] * 10

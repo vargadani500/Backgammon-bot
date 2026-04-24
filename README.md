@@ -32,9 +32,9 @@ You can customize the game rules and players by editing the `settings.py` file.
 
 ## Test results
 
-| Bots           | random_bot   | greedy_bot | hard_bot | botond |
-|:---------------|:-------------|:-----------|:---------|:-------|
-| **random_bot** | 100048:99952 | 9831:169   | 500:0    | 98:2   |
-| **greedy_bot** |              | 4914:5086  | 65:35    | 16:84  |
-| **hard_bot**   |              |            | 49:51    | 14:86  |
-| **botond**     |              |            |          | 49:51  |
+| Bots           | random_bot   | greedy_bot    | hard_bot | botond |
+|:---------------|:-------------|:--------------|:---------|:-------|
+| **random_bot** | 100048:99952 | 9831:169      | 500:0    | 98:2   |
+| **greedy_bot** |              | 487126:512874 | 65:35    | 16:84  |
+| **hard_bot**   |              |               | 49:51    | 14:86  |
+| **botond**     |              |               |          | 49:51  |
