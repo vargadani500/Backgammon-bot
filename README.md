@@ -1,12 +1,7 @@
 # Backgammon Bot
 
-A Python-based Backgammon game featuring a playable graphical interface and some bots. You can play against the computer or simulate different bots battle each other.
-
-## Features
-* **Graphical Interface:** Built with pygame for interactive gameplay
-* **Multiple AI Bots:** Ranging from random moves to a 2-ply Expectiminimax algorithm
-* **Configurable Matches:** Easily set up Human vs. Bot, Bot vs. Bot, or Human vs. Human games
-* **Headless Mode:** For bot vs. bot simulations and data gathering
+A Python-based Backgammon game with graphical interface made with pygame and some bots. You can play against the computer or simulate different bots battle each other.
+This was made for a university project and doubling dice is not implemented.
 
 ## Prerequisites
 This project requires Python 3 and the `pygame` library. Install the dependency using:
@@ -31,12 +26,13 @@ You can customize the game rules and players by editing the `settings.py` file.
 * **Roll:** Click the "Roll" button
 * **Moving:** Click and drag the chip to target position (invalid moves/turns are noted in the console)
 
-## Test results (the second has starter advantage for these)
+## Test results
+the second has starter advantage for these
 
 | Bots           | random_bot   | greedy_bot    | hard_bot | botond |
 |:---------------|:-------------|:--------------|:---------|:-------|
-| **random_bot** | 48584:51416  | 9850:150      | 500:0    | 98:2   |
-| **greedy_bot** |              | 487126:512874 | 65:35    | 16:84  |
-| **hard_bot**   |              |               | 49:51    | 14:86  |
+| **random_bot** | 48584:51416  | 9850:150      | 1000:0   | 98:2   |
+| **greedy_bot** |              | 487126:512874 | 696:304  | 16:84  |
+| **hard_bot**   |              |               | 474:526  | 14:86  |
 | **botond**     |              |               |          | 49:51  |
 
