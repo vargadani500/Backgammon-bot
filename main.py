@@ -58,15 +58,12 @@ def main():
                 board.winner = 0
                 board.set()
                 total_games += 1
-                if total_games % settings.summation == 0:
+                if total_games % 1 == 0:
                     b_wins = int(total_games / 2 - sum_of_wins / 2)
                     w_wins = int(total_games / 2 + sum_of_wins / 2)
 
                     print(f"Total games: {total_games}\nCurrent standing: ({settings.B_Player}){b_wins}:{w_wins}({settings.W_Player})")
 
-        # Slow down, for following robot moves
-        if settings.mps:
-            pygame.time.Clock().tick(settings.mps)
 
         # Pygame events
         for event in pygame.event.get():
