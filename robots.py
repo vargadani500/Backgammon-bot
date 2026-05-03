@@ -110,7 +110,7 @@ def human():
     raise Exception("This is shouldn't be called upon")
 
 
-def random_bot(board, dice):
+def random_bot(board, dice,model):
     paths = board.get_valid_turns(dice)[0]
     if not paths:
         return []
@@ -152,7 +152,7 @@ def hard_bot(board, dice):
         dice.turn *= -1
         for roll, weight in get_rolls():
             dice.roll(roll)
-            greedy_state = greedy_bot(board, dice, True)
+            greedy_state = greedy_bot(board, dice, model,True)
             score += scorer(greedy_state, dice.turn*-1, False) * weight
 
         if score > best_move[1]:
@@ -247,3 +247,155 @@ def botond(board, dice):
             best_movee[1]=finval
 
     return best_movee[0]
+
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, TensorDataset
+
+import torch.optim as optim
+
+#creating the model
+
+#old version
+"""class BGnet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(28, 256)
+        self.fc2 = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(256, 128)
+        self.fc4 = nn.Linear(128, 1)
+
+        self.ln1 = nn.LayerNorm(256)
+        self.ln2 = nn.LayerNorm(256)
+        self.ln3 = nn.LayerNorm(128)
+
+    def forward(self, x):
+        x = F.gelu(self.ln1(self.fc1(x)))
+        x = F.gelu(self.ln2(self.fc2(x)))
+        x = F.gelu(self.ln3(self.fc3(x)))
+        x = self.fc4(x)
+        return x"""
+
+
+#new version
+class ResidualBlock(nn.Module):
+    def __init__(self, size):
+        super().__init__()
+        self.fc = nn.Linear(size, size)
+        self.ln = nn.LayerNorm(size)
+
+    def forward(self, x):
+        h = self.fc(x)
+        h = self.ln(h)
+        h = F.gelu(h)
+        return x + h
+
+
+class BGnet(nn.Module):
+    def __init__(self, input_size=28):
+        super().__init__()
+
+        self.input_layer = nn.Linear(input_size, 256)
+        self.ln_in = nn.LayerNorm(256)
+
+        self.res_blocks = nn.Sequential(
+            *[ResidualBlock(256) for _ in range(4)]
+        )
+
+        self.fc_reduce1 = nn.Linear(256, 128)
+        self.ln_reduce1 = nn.LayerNorm(128)
+
+        self.fc_reduce2 = nn.Linear(128, 64)
+        self.ln_reduce2 = nn.LayerNorm(64)
+
+        self.output_layer = nn.Linear(64, 1)
+
+    def forward(self, x):
+        x = F.gelu(self.ln_in(self.input_layer(x)))
+        x = self.res_blocks(x)
+        x = F.gelu(self.ln_reduce1(self.fc_reduce1(x)))
+        x = F.gelu(self.ln_reduce2(self.fc_reduce2(x)))
+        return self.output_layer(x)
+
+
+#creating the model
+model = BGnet()
+model.load_state_dict(torch.load("nv_backgammon_model5311.pth15"))
+
+def ai_bot(board, dice,return_state=False):
+
+    #greedy bot's pattern
+
+    turns = board.get_valid_turns(dice)
+    best_move = [[], float("-inf"), board.state]
+
+    # inverting the board
+    if dice.turn>0:
+        scaled_states = torch.tensor(turns[1]).float() / 10
+    else:
+        scaled_states=[]
+        for i in turns[1]:
+            scaled_states.append(i[:24][::-1]+(i[25],i[24],i[27],i[26]))
+        scaled_states = torch.tensor(scaled_states).float() / -10
+
+    # Finding the move with the highest score
+    if len(scaled_states)==0:
+        if return_state:
+            if dice.turn > 0:
+                return model(torch.tensor(board.state).float() / 10)
+            else:
+
+                return model(torch.tensor(board.state[:24][::-1] + (board.state[25], board.state[24], board.state[27], board.state[26])).float() / -10)
+        else:
+            return []
+    scores=model(scaled_states)
+    for i in range(len(scores)):
+        if scores[i] > best_move[1]:
+            best_move = [turns[0][i], scores[i], turns[1][i]]
+
+    if return_state:
+        return best_move[1]
+
+    return best_move[0]
+
+
+
+def hard_ai_bot(board, dice):
+    #hard bot's pattern
+    # Expectiminimax algorithm (2-ply)
+    turns = board.get_valid_turns(dice)
+    best_move = [[], float("inf")]
+
+    # Finding the move with the highest expected outcome
+    for path, state in zip(*turns):
+        score = 0
+
+        # Saving the state
+        save_winner = board.winner
+        save_state = board.state[:]
+        remaining_state = dice.remaining[:]
+        save_dice = dice.state[:]
+
+        # Making the move for further calculation
+        for move in path:
+            board.make_move(dice, move)
+
+        dice.turn *= -1
+        for roll, weight in get_rolls():
+            dice.roll(roll)
+            score += ai_bot(board, dice, model,True) * weight
+
+        if score < best_move[1]:
+            best_move = [path, score]
+
+        # Loading original state
+        dice.turn *= -1
+        dice.state = save_dice
+        dice.remaining = remaining_state
+        board.state = save_state
+        board.winner = save_winner
+
+    return best_move[0]
