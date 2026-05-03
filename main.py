@@ -9,6 +9,11 @@ pygame.init()
 Screen = pygame.display.set_mode((Width, Height))
 pygame.display.set_caption("Backgammon")
 
+#creating the model
+
+model = BGnet()
+model.load_state_dict(torch.load("nv_backgammon_model5311.pth15"))
+
 
 def main():
     # Setting the game up
@@ -46,7 +51,7 @@ def main():
                         else:
                             dice.roll()
                         # Get the bots decision
-                        turn = white_bot(board, dice)
+                        turn = white_bot(board, dice,model)
                 else:
                     # Check if human player
                     if settings.B_Player == "human":
@@ -58,7 +63,7 @@ def main():
                         else:
                             dice.roll()
                         # Get the bots decision
-                        turn = black_bot(board, dice)
+                        turn = black_bot(board, dice,model)
                 if not human_turn:
                     for move in turn:
                         board.make_move(dice, move)

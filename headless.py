@@ -2,6 +2,15 @@ import multiprocessing as mp
 from robots import *
 import settings
 
+
+
+#creating the model
+
+model = BGnet()
+prev_model = BGnet()
+model.load_state_dict(torch.load("nv_backgammon_model5311.pth15"))
+prev_model.load_state_dict(torch.load("nv_backgammon_model5311.pth15"))
+
 def play_headless_game(dummy_arg):
     """
     Playing an entire game without graphics
@@ -24,9 +33,9 @@ def play_headless_game(dummy_arg):
             dice.roll()
 
         if dice.turn == 1:
-            turn = white_bot(board, dice)
+            turn = white_bot(board, dice,prev_model)
         else:
-            turn = black_bot(board, dice)
+            turn = black_bot(board, dice,model)
 
         for move in turn:
             board.make_move(dice, move)
