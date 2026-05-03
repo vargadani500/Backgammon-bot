@@ -117,7 +117,7 @@ def random_bot(board, dice,model):
     return random.choice(paths)
 
 
-def greedy_bot(board, dice, return_state=False):
+def greedy_bot(board, dice,model, return_state=False):
     turns = board.get_valid_turns(dice)
     best_move = [[], float("-inf"), board.state]
     # Finding the move with the highest score
@@ -130,7 +130,7 @@ def greedy_bot(board, dice, return_state=False):
     return best_move[0]
 
 
-def hard_bot(board, dice):
+def hard_bot(board, dice,model):
     # Expectiminimax algorithm (2-ply)
     turns = board.get_valid_turns(dice)
     best_move = [[], float("-inf")]
@@ -191,7 +191,7 @@ def potential(board_state):
 #output is positive if the bot is leading
 
 
-def botond(board, dice):
+def botond(board, dice,model):
     best_movee = [[], float("-inf")]
 
     agressivness= potential(board.state)
@@ -325,7 +325,7 @@ class BGnet(nn.Module):
 model = BGnet()
 model.load_state_dict(torch.load("nv_backgammon_model5311.pth15"))
 
-def ai_bot(board, dice,return_state=False):
+def ai_bot(board, dice,model,return_state=False):
 
     #greedy bot's pattern
 
@@ -363,7 +363,7 @@ def ai_bot(board, dice,return_state=False):
 
 
 
-def hard_ai_bot(board, dice):
+def hard_ai_bot(board, dice,model):
     #hard bot's pattern
     # Expectiminimax algorithm (2-ply)
     turns = board.get_valid_turns(dice)
