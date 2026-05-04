@@ -33,10 +33,15 @@ def play_headless_game(dummy_arg):
             dice.roll()
 
         if dice.turn == 1:
-            turn = white_bot(board, dice,prev_model)
+            if "ai" in settings.W_Player:
+                turn = white_bot(board, dice,prev_model)
+            else:
+                turn = white_bot(board, dice)
         else:
-            turn = black_bot(board, dice,model)
-
+            if "ai" in settings.B_Player:
+                turn = black_bot(board, dice,model)
+            else:
+                turn = black_bot(board, dice)
         for move in turn:
             board.make_move(dice, move)
         dice.remaining = ()
@@ -62,8 +67,7 @@ def main():
             b_wins = int(total_games / 2 - sum_of_wins / 2)
             w_wins = int(total_games / 2 + sum_of_wins / 2)
 
-            print(
-                f"Total games: {total_games}\nCurrent standing: ({settings.B_Player}){b_wins}:{w_wins}({settings.W_Player})")
+            print(f"Total games: {total_games}\nCurrent standing: ({settings.B_Player}){b_wins}:{w_wins}({settings.W_Player})")
 
 if __name__ == "__main__":
     main()

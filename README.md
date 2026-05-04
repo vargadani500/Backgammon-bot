@@ -23,8 +23,8 @@ You can customize the game rules and players by editing the `settings.py` file.
 
 ## Controls
 
-* **Roll:** Click the "Roll" button
-* **Moving:** Click and drag the chip to target position (invalid moves/turns are noted in the console)
+* **Rolling:** Click the "Roll" button
+* **Moving:** Click on the row where you want to move from and then click where you want to move to  (invalid moves/turns are noted in the console)
 
 ## Test results
 the second has starter advantage for these
