@@ -26,7 +26,7 @@ def main():
     sum_of_wins = 0
     total_games = 0
     human_turn = False
-    start_pos, end_pos = None, None # Truth value of None is false
+    start_pos, end_pos = None, None
     turn = []
 
     # Reading
@@ -110,7 +110,7 @@ def main():
                 pygame.quit()
                 sys.exit()
             if human_turn:
-                if not start_pos:
+                if start_pos is None:
                     # Getting start pos
                     if event.type == pygame.MOUSEBUTTONUP:
                         start_pos = get_point_from_mouse(pygame.mouse.get_pos())
