@@ -1,4 +1,5 @@
-import sys
+import sys, os
+from pathlib import Path
 from robots import *
 from draw_functions import *
 
@@ -27,11 +28,17 @@ def main():
     total_games = 0
     human_turn = False
     start_pos, end_pos = None, None
+    turn_count = 0
     turn = []
 
     # Reading
     white_bot = globals()[settings.W_Player]
     black_bot = globals()[settings.B_Player]
+
+    # For GIFs
+    current_dir = Path(__file__).parent
+    if not os.path.exists(current_dir / "Games"):
+        os.makedirs(current_dir / "Games")
 
     roll_button = Button(pygame.Rect(chip_size*3.5, chip_size*.5, chip_size * 2, chip_size), "Roll")
     restart_button = Button(pygame.Rect(chip_size*9, chip_size*.5, chip_size * 2, chip_size), "Restart")
@@ -74,10 +81,18 @@ def main():
                         board.make_move(dice, move)
                     dice.remaining = ()
                     dice.turn *= -1
+                    # Screenshotting for GIFs
+                    if settings.GIF:
+                        turn_count += 1
+                        if not os.path.exists(current_dir / f"Games/Game_{total_games}"):
+                            os.makedirs(current_dir / f"Games/Game_{total_games}")
+                        game_surface = Screen.subsurface([0, chip_size * 2, chip_size * 14.5, chip_size * 12.5])
+                        pygame.image.save(game_surface, f"Games/Game_{total_games}/{turn_count}.png")
             else:
                 first = True
                 sum_of_wins += board.winner
                 board.winner = 0
+                turn_count = 0
                 board.set()
                 total_games += 1
                 if total_games % 1 == 0:
@@ -89,9 +104,15 @@ def main():
         # Pygame events
         for event in pygame.event.get():
             if not board.get_valid_turns(dice)[0]:
-                # Auto roll if no moves
+                # Auto skip if no moves
                 if dice.remaining:
                     dice.turn *= -1
+                    if settings.GIF:
+                        turn_count += 1
+                        if not os.path.exists(current_dir / f"Games/Game_{total_games}"):
+                            os.makedirs(current_dir / f"Games/Game_{total_games}")
+                        game_surface = Screen.subsurface([0, chip_size * 2, chip_size * 14.5, chip_size * 12.5])
+                        pygame.image.save(game_surface, f"Games/Game_{total_games}/{turn_count}.png")
                     human_turn = False
                 # Roll if clicked and available
                 elif roll_button.check(event):

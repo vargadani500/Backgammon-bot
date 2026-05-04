@@ -3,7 +3,7 @@
 chip_size = 50
 
 # Frames per second (also limits the speed of bots)
-fps = 60
+fps = 600
 
 # How often the wins get summed for headless (Might affect performance)
 summation = 10
@@ -12,5 +12,8 @@ summation = 10
 starter = 0
 
 # Who plays as White and Black
-B_Player = "hard_ai_bot"
-W_Player = "human"
+B_Player = "hard_bot"
+W_Player = "hard_ai_bot"
+
+# Image saving for GIFs
+GIF = False

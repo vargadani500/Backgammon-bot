@@ -3,9 +3,7 @@ from robots import *
 import settings
 
 
-
 #creating the model
-
 model = BGnet()
 prev_model = BGnet()
 model.load_state_dict(torch.load("nv_backgammon_model5311.pth15"))
