@@ -4,22 +4,24 @@ A Python-based Backgammon game with graphical interface made with pygame and som
 This was made for a university project and doubling dice is not implemented.
 
 ## Prerequisites
-This project requires Python 3 and the `pygame` library. Install the dependency using:
+This project requires Python 3 and the `pygame`, `NumPy` and `PyTorch` library. Install the dependency using:
 ```bash
 pip install pygame
+pip install numpy as np
+pip install torch torchvision
 ```
 
 ## Configuration
 
 You can customize the game rules and players by editing the `settings.py` file. 
 
-| Setting                 | Description                                                       | Options / Notes                                                      |
-|:------------------------|:------------------------------------------------------------------|:---------------------------------------------------------------------|
-| `W_Player` / `B_Player` | Determines who controls White and Black.                          | `"human"`, `"random_bot"`, `"greedy_bot"`, `"hard_bot"`, `"botond"`  |
-| `starter`               | Determines who starts                                             | Integer (default: `1`)<br/>(0 for random, 1 for white, -1 for black) |
-| `chip_size`             | Base unit for rendering; scales the entire board and window size. | Integer (default: `50`)                                              |
-| `fps`                   | The frame rate limit for the Pygame window.                       | Integer (default: `60`)                                              |
-| `summation`             | Defines how often the win/loss record is printed to the console.  | Integer (default: `1`)                                               |
+| Setting                 | Description                                                       | Options / Notes                                                                                   |
+|:------------------------|:------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------|
+| `W_Player` / `B_Player` | Determines who controls White and Black.                          | `"human"`, `"random_bot"`, `"greedy_bot"`, `"hard_bot"`, `"botond"`, `"ai_bot"`, `"hard_ai_bot"`  |
+| `starter`               | Determines who starts                                             | Integer (default: `1`)<br/>(0 for random, 1 for white, -1 for black)                              |
+| `chip_size`             | Base unit for rendering; scales the entire board and window size. | Integer (default: `50`)                                                                           |
+| `fps`                   | The frame rate limit for the Pygame window.                       | Integer (default: `60`)                                                                           |
+| `summation`             | Defines how often the win/loss record is printed to the console.  | Integer (default: `1`)                                                                            |
 
 ## Controls
 
@@ -29,10 +31,10 @@ You can customize the game rules and players by editing the `settings.py` file.
 ## Test results
 the second has starter advantage for these
 
-| Bots           | random_bot   | greedy_bot    | hard_bot | botond |
-|:---------------|:-------------|:--------------|:---------|:-------|
-| **random_bot** | 48584:51416  | 9850:150      | 1000:0   | 98:2   |
-| **greedy_bot** |              | 487126:512874 | 696:304  | 16:84  |
+| Bots           | random_bot   | greedy_bot    | hard_bot | botond |   ai_bot   | hard_ai_bot |
+|:---------------|:-------------|:--------------|:---------|:-------|:-------------------------|
+| **random_bot** | 48584:51416  | 9850:150      | 1000:0   | 98:2   | 9760:240   |
+| **greedy_bot** |              | 487126:512874 | 696:304  | 16:84  | 6247:3753  |
 | **hard_bot**   |              |               | 474:526  | 14:86  |
 | **botond**     |              |               |          | 49:51  |
-
+| **ai_bot**     |              | 
