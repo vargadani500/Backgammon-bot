@@ -1,18 +1,14 @@
+from robots import scorer
+
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.nn.functional as f
 from torch.utils.data import DataLoader, TensorDataset
-
 import torch.optim as optim
 
-from functions import *
-from robots import *
+
 #setting up model
-
-
-
-
 """class BGnet(nn.Module):
     def __init__(self):
         super().__init__()
@@ -26,9 +22,9 @@ from robots import *
         self.ln3 = nn.LayerNorm(128)
 
     def forward(self, x):
-        x = F.gelu(self.ln1(self.fc1(x)))
-        x = F.gelu(self.ln2(self.fc2(x)))
-        x = F.gelu(self.ln3(self.fc3(x)))
+        x = f.gelu(self.ln1(self.fc1(x)))
+        x = f.gelu(self.ln2(self.fc2(x)))
+        x = f.gelu(self.ln3(self.fc3(x)))
         x = self.fc4(x)
         return x"""
 
@@ -42,7 +38,7 @@ class ResidualBlock(nn.Module):
     def forward(self, x):
         h = self.fc(x)
         h = self.ln(h)
-        h = F.gelu(h)
+        h = f.gelu(h)
         return x + h
 
 
@@ -66,10 +62,10 @@ class BGnetV2(nn.Module):
         self.output_layer = nn.Linear(64, 1)
 
     def forward(self, x):
-        x = F.gelu(self.ln_in(self.input_layer(x)))
+        x = f.gelu(self.ln_in(self.input_layer(x)))
         x = self.res_blocks(x)
-        x = F.gelu(self.ln_reduce1(self.fc_reduce1(x)))
-        x = F.gelu(self.ln_reduce2(self.fc_reduce2(x)))
+        x = f.gelu(self.ln_reduce1(self.fc_reduce1(x)))
+        x = f.gelu(self.ln_reduce2(self.fc_reduce2(x)))
         return self.output_layer(x)
 
 

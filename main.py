@@ -51,7 +51,10 @@ def main():
                         else:
                             dice.roll()
                         # Get the bots decision
-                        turn = white_bot(board, dice,model)
+                        if "ai" in white_bot:
+                            turn = white_bot(board, dice,model)
+                        else:
+                            turn = white_bot(board, dice)
                 else:
                     # Check if human player
                     if settings.B_Player == "human":
@@ -63,7 +66,10 @@ def main():
                         else:
                             dice.roll()
                         # Get the bots decision
-                        turn = black_bot(board, dice,model)
+                        if "ai" in black_bot:
+                            turn = black_bot(board, dice,model)
+                        else:
+                            turn = white_bot(board, dice)
                 if not human_turn:
                     for move in turn:
                         board.make_move(dice, move)
@@ -78,7 +84,6 @@ def main():
                 if total_games % 1 == 0:
                     b_wins = int(total_games / 2 - sum_of_wins / 2)
                     w_wins = int(total_games / 2 + sum_of_wins / 2)
-
                     print(f"Total games: {total_games}\nCurrent standing: ({settings.B_Player}){b_wins}:{w_wins}({settings.W_Player})")
 
 

@@ -1,4 +1,7 @@
 from functions import *
+import torch
+import torch.nn as nn
+import torch.nn.functional as f
 
 # State
 # 0-23 is the board from white house to black house
@@ -110,14 +113,14 @@ def human():
     raise Exception("This is shouldn't be called upon")
 
 
-def random_bot(board, dice,model):
+def random_bot(board, dice):
     paths = board.get_valid_turns(dice)[0]
     if not paths:
         return []
     return random.choice(paths)
 
 
-def greedy_bot(board, dice,model, return_state=False):
+def greedy_bot(board, dice, return_state=False):
     turns = board.get_valid_turns(dice)
     best_move = [[], float("-inf"), board.state]
     # Finding the move with the highest score
@@ -130,7 +133,7 @@ def greedy_bot(board, dice,model, return_state=False):
     return best_move[0]
 
 
-def hard_bot(board, dice,model):
+def hard_bot(board, dice):
     # Expectiminimax algorithm (2-ply)
     turns = board.get_valid_turns(dice)
     best_move = [[], float("-inf")]
@@ -152,7 +155,7 @@ def hard_bot(board, dice,model):
         dice.turn *= -1
         for roll, weight in get_rolls():
             dice.roll(roll)
-            greedy_state = greedy_bot(board, dice, model,True)
+            greedy_state = greedy_bot(board, dice,True)
             score += scorer(greedy_state, dice.turn*-1, False) * weight
 
         if score > best_move[1]:
@@ -191,20 +194,20 @@ def potential(board_state):
 #output is positive if the bot is leading
 
 
-def botond(board, dice,model):
+def botond(board, dice):
     best_movee = [[], float("-inf")]
 
-    agressivness= potential(board.state)
+    aggressiveness= potential(board.state)
 
-    mainpaths=board.get_valid_turns(dice)
+    main_paths=board.get_valid_turns(dice)
 
     try_dice=Dice()
     try_dice.turn= -1*dice.turn
     try_board=Board()
 
-    #the value of mainpaths
-    for num in range(len(mainpaths[1])):
-        states=mainpaths[1][num]
+    #the value of main_paths
+    for num in range(len(main_paths[1])):
+        states=main_paths[1][num]
 
 
         rolls=[]
@@ -219,12 +222,12 @@ def botond(board, dice,model):
                 if len(experimental_states[1])>0:
                     rolls.append( min(potential(enemy_board) for enemy_board in experimental_states[1]))
                 else:
-                    rolls.append(agressivness)
+                    rolls.append(aggressiveness)
 
         #counting
         exp_value= sum(rolls)
         rolls.sort(reverse=True)
-        agr_exp_value=sum(rolls[0:(1+int(min(len(rolls),(len(rolls)+agressivness*len(rolls)))))])
+        agr_exp_value=sum(rolls[0:(1 + int(min(len(rolls), (len(rolls) + aggressiveness * len(rolls)))))])
 
 
         #agressive strategy
@@ -241,23 +244,12 @@ def botond(board, dice,model):
         crashes+=states[25]*(15-states[26])
 
         #final value
-        finval=exp_value+agr_exp_value+crashes*agressivness*0.1
-        if finval>best_movee[1]:
-            best_movee[0]=mainpaths[0][num]
-            best_movee[1]=finval
+        fin_val= exp_value + agr_exp_value + crashes * aggressiveness * 0.1
+        if fin_val>best_movee[1]:
+            best_movee[0]=main_paths[0][num]
+            best_movee[1]=fin_val
 
     return best_movee[0]
-
-
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader, TensorDataset
-
-import torch.optim as optim
-
-#creating the model
 
 #old version
 """class BGnet(nn.Module):
@@ -290,7 +282,7 @@ class ResidualBlock(nn.Module):
     def forward(self, x):
         h = self.fc(x)
         h = self.ln(h)
-        h = F.gelu(h)
+        h = f.gelu(h)
         return x + h
 
 
@@ -314,18 +306,14 @@ class BGnet(nn.Module):
         self.output_layer = nn.Linear(64, 1)
 
     def forward(self, x):
-        x = F.gelu(self.ln_in(self.input_layer(x)))
+        x = f.gelu(self.ln_in(self.input_layer(x)))
         x = self.res_blocks(x)
-        x = F.gelu(self.ln_reduce1(self.fc_reduce1(x)))
-        x = F.gelu(self.ln_reduce2(self.fc_reduce2(x)))
+        x = f.gelu(self.ln_reduce1(self.fc_reduce1(x)))
+        x = f.gelu(self.ln_reduce2(self.fc_reduce2(x)))
         return self.output_layer(x)
 
 
-#creating the model
-model = BGnet()
-model.load_state_dict(torch.load("nv_backgammon_model5311.pth15"))
-
-def ai_bot(board, dice,model,return_state=False):
+def ai_bot(board, dice, model,return_state=False):
 
     #greedy bot's pattern
 
@@ -363,7 +351,7 @@ def ai_bot(board, dice,model,return_state=False):
 
 
 
-def hard_ai_bot(board, dice,model):
+def hard_ai_bot(board, dice, model):
     #hard bot's pattern
     # Expectiminimax algorithm (2-ply)
     turns = board.get_valid_turns(dice)

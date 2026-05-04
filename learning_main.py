@@ -1,10 +1,7 @@
-import sys
-
-import numpy as np
-import torch
-
 from robots import *
-
+import numpy as np
+from torch.utils.data import DataLoader, TensorDataset
+import torch.optim as optim
 
 
 #The number of games played between learning stages
@@ -130,7 +127,7 @@ def main():
                         print(model(a))
                         print(b)
 
-                    # saving the improvement as white is ai bot
+                    # saving the improvement as white is AI bot
                     current_win_rate = (
                                                    int(total_games / 2 + sum_of_wins / 2) - prev_wins) / learning_stage_length
                     print(f'Current win rate: {current_win_rate}')
@@ -204,12 +201,6 @@ def main():
                     print(
                         f"Model weights saved: {PATH} New winrate: {current_win_rate} This is the {num_of_models}. model. Teaching trials: {stage_number}")
                     prev_wins = total_games / 2 + sum_of_wins / 2
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
