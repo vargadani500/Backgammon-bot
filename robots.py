@@ -110,7 +110,7 @@ def get_rolls():
 
 
 def human():
-    raise Exception("This is shouldn't be called upon")
+    raise Exception("This shouldn't be called upon")
 
 
 def random_bot(board, dice):
@@ -169,9 +169,6 @@ def hard_bot(board, dice):
         board.winner = save_winner
 
     return best_move[0]
-
-
-
 
 
 #the rate of moves left before winning
@@ -336,7 +333,7 @@ def ai_bot(board, dice, model,return_state=False):
                 return model(torch.tensor(board.state).float() / 10)
             else:
 
-                return model(torch.tensor(board.state[:24][::-1] + (board.state[25], board.state[24], board.state[27], board.state[26])).float() / -10)
+                return model(torch.tensor(board.state[:24][::-1] + [board.state[25], board.state[24], board.state[27], board.state[26]]).float() / -10)
         else:
             return []
     scores=model(scaled_states)
