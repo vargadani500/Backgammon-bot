@@ -10,7 +10,7 @@ This project requires Python 3 and the `pygame`, `NumPy` and `PyTorch` library. 
 ```bash
 pip install pygame
 pip install numpy as np
-pip install torch torchvision
+pip install torch torchvision torchaudio
 ```
 
 ## Configuration
@@ -46,5 +46,5 @@ the second has starter advantage for these
 | **greedy_bot** |              | 487126:512874 | 696:304  | 16:84  | 6247:3753  | 742:258     |
 | **hard_bot**   |              |               | 474:526  | 14:86  | 398:602    | 532:468     |
 | **botond**     |              |               |          | 49:51  | 76:24      | 79:21       |
-| **ai_bot**     |              |               |          |        | 528:472    | 563:437     |
+| **ai_bot**     |              |               |          |        | 472:528    | 563:437     |
 | **hard_ai_bot**|              |               | 419:581  |        | 383:617    | 464:536     |
