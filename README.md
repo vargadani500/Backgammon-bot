@@ -9,9 +9,16 @@ The bot `ai_bot` and its 2-ply version `hard_ai_bot` are using neural networks p
 This project requires Python 3 and the `pygame`, `NumPy` and `PyTorch` library. Install the dependency using:
 ```bash
 pip install pygame
-pip install numpy as np
+pip install numpy
 pip install torch torchvision torchaudio
 ```
+
+<p align="center">
+  <img src="GIFs/hard_ai_bot%20vs%20hard_bot.gif" alt="Hard AI Bot vs Hard Bot" width="48%">
+  <img src="GIFs/hard_bot%20vs%20random_bot.gif" alt="Hard Bot vs Random Bot" width="48%">
+  <br>
+  <em>Here are the two best bots against each other, than against random moves</em>
+</p>
 
 ## Configuration
 
@@ -33,18 +40,18 @@ You can customize the game rules and players by editing the `settings.py` file.
 ## Training
 You can find two additional files `ai_bot_torch.py` and `learning_main.py` with which you can easily train your own model following the way we went through. By running `ai_bot_torch.py`, you can create a model which tries to copy the `scorer()` function of `robots.py`. The program prints you the number of times of 10000 trials, when your model chose the same 'best board state' from 30 random boards as the scorer did. If you enter "s" after that your model will be saved.
 
-For further training you can use `learning_main.py`. It is an environment created for the reinforcement learning process. By running this you can run matches between your `ai_bot` and the `greedy_bot` using the `scorer()` function. The program creates a database of the board states occurring durig the games, and a database storing the value of each state. This value is calculated by adding a percent of the `scorer()` function's scaled value to the value of the next state of the game evaluated by your model. And as the training process goes on it is recommended to increase the significance of the TD factor, then wait until the model's winrate stabilises before increase it again. During this stage, it's a good idea to use the previous stable model to create the training dataset. This follows the logic of TD learning.
+For further training you can use `learning_main.py`. It is an environment created for the reinforcement learning process. By running this you can run matches between your `ai_bot` and the `greedy_bot` using the `scorer()` function. The program creates a database of the board states occurring during the games, and a database storing the value of each state. This value is calculated by adding a percent of the `scorer()` function's scaled value to the value of the next state of the game evaluated by your model. And as the training process goes on it is recommended to increase the significance of the TD factor, then wait until the model's winrate stabilises before increase it again. During this stage, it's a good idea to use the previous stable model to create the training dataset. This follows the logic of TD learning.
 
 After your model has reached the level of the greedy bot, it's time to play games against itself. One of the ai_bots is the teacher, using an earlier stable version of the model and the other is the student who tries to get better than its teacher. And when it happens, the old student becomes a new teacher. The code is now set up for this process. 
 
 ## Test results
 the second has starter advantage for these
 
-| Bots           | random_bot   | greedy_bot    | hard_bot | botond |   ai_bot   | hard_ai_bot |
-|:---------------|:-------------|:--------------|:---------|:-------|:-----------|-------------|
-| **random_bot** | 48584:51416  | 9850:150      | 1000:0   | 98:2   | 9760:240   | 993:7       |
-| **greedy_bot** |              | 487126:512874 | 696:304  | 16:84  | 6247:3753  | 742:258     |
-| **hard_bot**   |              |               | 474:526  | 14:86  | 398:602    | 532:468     |
-| **botond**     |              |               |          | 49:51  | 76:24      | 79:21       |
-| **ai_bot**     |              |               |          |        | 472:528    | 563:437     |
-| **hard_ai_bot**|              |               | 419:581  |        | 383:617    | 464:536     |
+| Bots            | random_bot  | greedy_bot    | hard_bot | botond | ai_bot    | hard_ai_bot |
+|:----------------|:------------|:--------------|:---------|:-------|:----------|-------------|
+| **random_bot**  | 48584:51416 | 9850:150      | 1000:0   | 98:2   | 9760:240  | 993:7       |
+| **greedy_bot**  |             | 487126:512874 | 696:304  | 16:84  | 6247:3753 | 742:258     |
+| **hard_bot**    |             |               | 474:526  | 14:86  | 398:602   | 532:468     |
+| **botond**      |             |               |          | 49:51  | 76:24     | 79:21       |
+| **ai_bot**      |             |               |          |        | 472:528   | 563:437     |
+| **hard_ai_bot** |             |               | 419:581  |        | 383:617   | 464:536     |
