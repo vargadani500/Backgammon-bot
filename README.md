@@ -12,6 +12,7 @@ pip install pygame
 pip install numpy
 pip install torch torchvision torchaudio
 ```
+## Examples 
 
 <p align="center">
   <img src="GIFs/hard_ai_bot%20vs%20hard_bot.gif" alt="Hard AI Bot vs Hard Bot" width="48%">
