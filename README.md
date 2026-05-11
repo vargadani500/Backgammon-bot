@@ -22,7 +22,7 @@ pip install torch torchvision torchaudio
 </p>
 
 ## Configuration
-If you would like to play games against bots using our grafical environment, you can run the `main.py` file. Before you do so, you can customize the game rules and players by editing the `settings.py` file.
+If you would like to play games against bots using our graphical interface, you can run the `main.py` file. Before doing so, you can customize the game rules and players by editing the `settings.py` file.
 
 | Setting                 | Description                                                       | Options / Notes                                                                                   |
 |:------------------------|:------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------|
@@ -33,6 +33,8 @@ If you would like to play games against bots using our grafical environment, you
 | `summation`             | Defines how often the win/loss record is printed to the console.  | Integer (default: `1`)                                                                            |
 
 Observing bot vs bot games is also allowed in this way.
+During games like this, you will get messages about your moves warning you, if you try to make invalid moves.
+After one match, a new game starts. However, the program stores the results.
 
 ## Controls
 
@@ -40,7 +42,7 @@ Observing bot vs bot games is also allowed in this way.
 * **Moving:** Click on the row where you want to move from and then click where you want to move to  (invalid moves/turns are noted in the console)
 
 ## Testing
-To make tests between bots, we have a performance-based environment using multiproccessing. Before running a test, you should also customize the game rules and players by editing the `settings.py` file.
+To make tests between bots, we have a performance-based environment using multiprocessing. Before running a test, you should also customize the game rules, players, and the size of the test periods (`summation`) by editing the `settings.py` file. After that, you can easily initialize tests by running `headless.py`. At the end of each test period, the win/loss record is printed to the console.
 
 ## Test results
 the second has starter advantage for these
