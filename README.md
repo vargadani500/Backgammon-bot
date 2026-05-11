@@ -22,8 +22,7 @@ pip install torch torchvision torchaudio
 </p>
 
 ## Configuration
-
-You can customize the game rules and players by editing the `settings.py` file. 
+If you would like to play games against bots using our grafical environment, you can run the `main.py` file. Before you do so, you can customize the game rules and players by editing the `settings.py` file.
 
 | Setting                 | Description                                                       | Options / Notes                                                                                   |
 |:------------------------|:------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------|
@@ -33,17 +32,15 @@ You can customize the game rules and players by editing the `settings.py` file.
 | `fps`                   | The frame rate limit for the Pygame window.                       | Integer (default: `60`)                                                                           |
 | `summation`             | Defines how often the win/loss record is printed to the console.  | Integer (default: `1`)                                                                            |
 
+Observing bot vs bot games is also allowed in this way.
+
 ## Controls
 
 * **Rolling:** Click the "Roll" button
 * **Moving:** Click on the row where you want to move from and then click where you want to move to  (invalid moves/turns are noted in the console)
 
-## Training
-You can find two additional files `ai_bot_torch.py` and `learning_main.py` with which you can easily train your own model following the way we went through. By running `ai_bot_torch.py`, you can create a model which tries to copy the `scorer()` function of `robots.py`. The program prints you the number of times of 10000 trials, when your model chose the same 'best board state' from 30 random boards as the scorer did. If you enter "s" after that your model will be saved.
-
-For further training you can use `learning_main.py`. It is an environment created for the reinforcement learning process. By running this you can run matches between your `ai_bot` and the `greedy_bot` using the `scorer()` function. The program creates a database of the board states occurring during the games, and a database storing the value of each state. This value is calculated by adding a percent of the `scorer()` function's scaled value to the value of the next state of the game evaluated by your model. And as the training process goes on it is recommended to increase the significance of the TD factor, then wait until the model's winrate stabilises before increase it again. During this stage, it's a good idea to use the previous stable model to create the training dataset. This follows the logic of TD learning.
-
-After your model has reached the level of the greedy bot, it's time to play games against itself. One of the ai_bots is the teacher, using an earlier stable version of the model and the other is the student who tries to get better than its teacher. And when it happens, the old student becomes a new teacher. The code is now set up for this process. 
+## Testing
+To make tests between bots, we have a performance-based environment using multiproccessing. Before running a test, you should also customize the game rules and players by editing the `settings.py` file.
 
 ## Test results
 the second has starter advantage for these
@@ -56,3 +53,33 @@ the second has starter advantage for these
 | **botond**      |             |               |          | 49:51  | 76:24     | 79:21       |
 | **ai_bot**      |             |               |          |        | 472:528   | 563:437     |
 | **hard_ai_bot** |             |               | 419:581  |        | 383:617   | 464:536     |
+
+## Training
+You can find two additional files `ai_bot_torch.py` and `learning_main.py` with which you can easily train your own model following the way we went through. By running `ai_bot_torch.py`, you can create a model which tries to copy the `scorer` function of `robots.py`. The program prints you the number of times of 10000 trials, when your model chose the same 'best board state' from 30 random boards as the scorer did. If you enter "s" after that your model will be saved.
+
+For further training you can use `learning_main.py`. It is an environment created for the reinforcement learning process. By running this you can run matches between your `ai_bot` and the `greedy_bot` using the `scorer` function. The program creates a database of the board states occurring during the games, and a database storing the value of each state. This value is calculated by adding a percent of the `scorer` function's scaled value to the value of the next state of the game evaluated by your model. And as the training process goes on it is recommended to increase the significance of the TD factor, then wait until the model's winrate stabilises before increase it again. During this stage, it's a good idea to use the previous stable model to create the training dataset. This follows the logic of TD learning.
+
+After your model has reached the level of the greedy bot, it's time to play games against itself. One of the ai_bots is the teacher, using an earlier stable version of the model and the other is the student who tries to get better than its teacher. And when it happens, the old student becomes a new teacher. The code is now set up for this process. 
+
+## File overview
+
+Runnable files:
+
+| File name          | Usage                                                                                 |
+|:-------------------|:--------------------------------------------------------------------------------------|
+| `settings.py`      | Customize game rules and players (for `main.py`,  `headless.py` or `learning_main.py`)|
+| `main.py`          | Running games using the pygame graphical interface                                    |
+| `headless.py`      | Running tests between bots                                                            |
+| `learning_main.py` | Training models for `ai_bot`, using reinforcement learning                            |
+| `ai_bot_torch.py`  | Training models for `ai_bot` by copying the `scorer` function                         |
+
+Background files:
+
+| File name                      | Usage                                                                                 |
+|:-------------------------------|:--------------------------------------------------------------------------------------|
+| `robots.py`                    | The code of the bots                                                                  |
+| `functions.py`                 | Functions implementing the game logic                                                 |
+| `draw_functions.py`            | Graphical interface                                                                   |
+| `nv_backgammon_model5311.pth15`| Model for `ai_bot`                                                                    |
+
+
